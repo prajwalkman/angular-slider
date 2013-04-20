@@ -12,10 +12,11 @@ BUTTON_EL = 'slider-button';
 sliderDirective = function() {
   return {
     restrict: 'E',
-    template: "<" + SLIDER_BUTTON + "></" + SLIDER_BUTTON + ">",
-    link: function(scope, slider, attr) {
-      return slider.find(SLIDER_BUTTON).attr('ng-model', attr.ngModel);
-    }
+    scope: {
+      value: '='
+    },
+    template: "<" + BUTTON_EL + " ng-model=\"value\"></" + BUTTON_EL + ">",
+    link: function(scope, slider, attr) {}
   };
 };
 
@@ -23,13 +24,12 @@ sliderButtonDirective = function() {
   return {
     restrict: 'E',
     link: function(scope, button, attr) {
-      var XRange, bar, body, buttonWidth, fallbackVal, fitToStep, maxVal, maxX, minVal, minX, model, mouseEventHandler, moveSliderButton, offsetSubtract, step, translateValToX, translateXToVal, valRange;
+      var XRange, bar, body, buttonWidth, fallbackVal, fitToStep, maxVal, maxX, minVal, minX, mouseEventHandler, moveSliderButton, offsetSubtract, setValue, step, translateValToX, translateXToVal, valRange;
 
       body = bar = button.parent();
-      while (body.tagName !== 'BODY') {
+      while (body[0].tagName !== 'BODY') {
         body = body.parent();
       }
-      model = attr.ngModel;
       minVal = parseInt(bar.attr('min'));
       maxVal = parseInt(bar.attr('max'));
       valRange = maxVal - minVal;
@@ -52,40 +52,46 @@ sliderButtonDirective = function() {
 
         normX = (XVal - minX) / XRange;
         val = normX * valRange;
-        return Math.round(val);
+        return Math.round(val + minVal);
       };
       fitToStep = function(val) {
         var newVal, rem;
 
         rem = val % step;
-        newVal = rem > s / 2 ? val + (r - s) : val - r;
+        newVal = rem > step / 2 ? val + (step - rem) : val - rem;
         return newVal;
       };
+      setValue = function(value) {
+        return scope.$apply(function() {
+          return scope.value = value;
+        });
+      };
       moveSliderButton = function(newXVal) {
+        var newVal;
+
         newXVal = Math.max(newXVal, minX);
         newXVal = Math.min(newXVal, maxX);
         button.css({
           left: "" + newXVal + "px"
         });
-        return scope.$apply(function() {
-          return scope[model] = fitToStep(translateXToVal(newXVal));
-        });
+        newVal = fitToStep(translateXToVal(newXVal));
+        return newVal;
       };
       mouseEventHandler = function(mouseEvent) {
-        var XVal;
+        var XVal, newVal;
 
         XVal = mouseEvent.clientX - offsetSubtract;
-        return moveSliderButton(XVal);
+        newVal = moveSliderButton(XVal);
+        return setValue(newVal);
       };
+      scope.value = moveSliderButton(translateValToX(scope.value));
       bar.bind('click', mouseEventHandler);
-      bar.bind('mousedown', function() {
+      return bar.bind('mousedown', function() {
         body.bind('mousemove', mouseEventHandler);
         return body.bind('mouseup', function() {
-          return body.unbind('mousemove mouseup');
+          body.unbind('mousemove');
+          return body.unbind('mouseup');
         });
-      });
-      return scope.$watch(model, function(newVal, oldVal) {
-        return moveSliderButton(translateValToX(parseInt(newVal)));
       });
     }
   };
@@ -96,3 +102,14 @@ module = function(window, angular) {
 };
 
 module(window, window.angular);
+
+/* 
+app = angular.module 'app', [MODULE]
+
+app.controller 'Ctrl', ($scope) ->
+  $scope.name = 'world'
+  $scope.cost = 49
+
+angular.bootstrap document, ['app']
+*/
+
