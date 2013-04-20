@@ -15,15 +15,14 @@ sliderDirective = function() {
     scope: {
       value: '='
     },
-    template: "<" + BUTTON_EL + " ng-model=\"value\"></" + BUTTON_EL + ">",
-    link: function(scope, slider, attr) {}
+    template: "<" + BUTTON_EL + " ng-model=\"value\"></" + BUTTON_EL + ">"
   };
 };
 
 sliderButtonDirective = function() {
   return {
     restrict: 'E',
-    link: function(scope, button, attr) {
+    link: function(scope, button) {
       var XRange, bar, body, buttonWidth, fallbackVal, fitToStep, maxVal, maxX, minVal, minX, mouseEventHandler, moveSliderButton, offsetSubtract, setValue, step, translateValToX, translateXToVal, valRange;
 
       body = bar = button.parent();
@@ -102,14 +101,3 @@ module = function(window, angular) {
 };
 
 module(window, window.angular);
-
-/* 
-app = angular.module 'app', [MODULE]
-
-app.controller 'Ctrl', ($scope) ->
-  $scope.name = 'world'
-  $scope.cost = 49
-
-angular.bootstrap document, ['app']
-*/
-

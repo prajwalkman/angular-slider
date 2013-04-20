@@ -8,11 +8,10 @@ sliderDirective = ->
   scope:
     value: '='
   template: "<#{BUTTON_EL} ng-model=\"value\"></#{BUTTON_EL}>"
-  link: (scope, slider, attr) ->
 
 sliderButtonDirective = ->
   restrict: 'E'
-  link: (scope, button, attr) ->
+  link: (scope, button) ->
     body = bar = button.parent()
     body = body.parent() until body[0].tagName is 'BODY'
 
@@ -75,14 +74,3 @@ module = (window, angular) ->
   .directive(SLIDER_BUTTON, sliderButtonDirective)
 
 module(window, window.angular)
-
-### 
-app = angular.module 'app', [MODULE]
-
-app.controller 'Ctrl', ($scope) ->
-  $scope.name = 'world'
-  $scope.cost = 49
-
-angular.bootstrap document, ['app']
-
-###
