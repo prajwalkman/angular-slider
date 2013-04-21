@@ -1,35 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Angular-slider by prajwalkman</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Angular-slider : Slider directive implementation for AngularJS, without jQuery dependencies" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Angular-slider</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">Angular-slider</h1>
-        <p class="header">Slider directive implementation for AngularJS, without jQuery dependencies</p>
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/prajwalkman/angular-slider/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/prajwalkman/angular-slider/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/prajwalkman/angular-slider">View On GitHub</a></li>
-        </ul>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/prajwalkman/angular-slider">View on GitHub</a>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/prajwalkman">prajwalkman</a></p>
+          <h1 id="project_title">Angular-slider</h1>
+          <h2 id="project_tagline">Slider directive implementation for AngularJS, without jQuery dependencies</h2>
 
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/prajwalkman/angular-slider/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/prajwalkman/angular-slider/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-      </header>
-      <section>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>angular-slider (WIP)</h1>
 
 <p>Slider directive implementation for AngularJS, without jQuery dependencies.</p>
@@ -40,24 +41,61 @@
     &lt;li ng-repeat="item in items"&gt;
         &lt;p&gt;Name: {{item.name}}&lt;/p&gt;
         &lt;p&gt;Cost: {{item.cost}}&lt;/p&gt; 
-        &lt;slider min="100" max="1000" step="50" value="item.cost"&gt;&lt;/slider&gt;
+        &lt;slider min="100" max="1000" step="50" ng-model="item.cost"&gt;&lt;/slider&gt;
     &lt;/li&gt;
 &lt;/ul&gt;
+</code></pre>
+
+<h3>Styles:</h3>
+
+<p>No styles are included at the moment. You must apply your own styles to <em>slider</em> and <em>slider-button</em>
+Example:</p>
+
+<pre><code>slider,
+slider-button {
+    position: relative;
+    display: block;
+}
+slider {
+    width: 75%;
+    height: 20px;
+    background-color: #fff;
+    border: 1px solid;
+    z-index: 0;
+}
+slider slider-button {
+    z-index: 1;
+    background-color: #00f;
+    width: 6%;
+    height: 100%;
+}
 </code></pre>
 
 <h3>Known issues:</h3>
 
 <ol>
-<li>When applying filters or orders within an ng-repeat directive, the element can abruptly change its position when the value attached to the slider causes a filter to activate or the order to change. 
-Example: In the above snippet, it would be a very bad idea to order the list by item.cost.</li>
+<li><p>When applying filters or orders within an ng-repeat directive, the element can abruptly change its position when the value attached to the slider causes a filter to activate or the order to change. 
+Example: In the above snippet, it would be a very bad idea to order the list by item.cost.</p></li>
+<li><p>Sometimes an additional value is available in the slider at one end. In the above slider snipped, the lowest value could be 99 instead of 100.</p></li>
+</ol><h3>Roadmap:</h3>
+
+<ol>
+<li><p>Add range slider support (2 slider-buttons).</p></li>
+<li><p>Add classes to slider and slider-button on certain events (mouseover, mousedown, etc) to help styling.</p></li>
+<li><p>Test suite.</p></li>
 </ol>
       </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Angular-slider maintained by <a href="https://github.com/prajwalkman">prajwalkman</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		          <script type="text/javascript">
+
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -67,6 +105,7 @@ Example: In the above snippet, it would be a very bad idea to order the list by 
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
