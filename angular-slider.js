@@ -13,7 +13,7 @@ sliderDirective = function() {
   return {
     restrict: 'E',
     scope: {
-      value: '='
+      value: '=ngModel'
     },
     template: "<" + BUTTON_EL + " ng-model=\"value\"></" + BUTTON_EL + ">"
   };

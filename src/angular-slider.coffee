@@ -6,7 +6,7 @@ BUTTON_EL     = 'slider-button'
 sliderDirective = ->
   restrict: 'E'
   scope:
-    value: '='
+    value: '=ngModel'
   template: "<#{BUTTON_EL} ng-model=\"value\"></#{BUTTON_EL}>"
 
 sliderButtonDirective = ->
