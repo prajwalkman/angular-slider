@@ -1,0 +1,62 @@
+@import 'nib'
+
+slider
+    display inline-block
+    position relative
+    height 7px
+    width 100%
+    margin 25px 5px 25px 5px
+    span
+        white-space nowrap
+        position absolute
+        display inline-block
+        &.base
+            width 100%
+            height 100%
+            padding 0
+        &.bar
+            width 100%
+            height 100%
+            z-index 0
+            border-radius 1em/1em
+            background linear-gradient(top, lighten(gray, 50%), lighten(gray, 10%))
+            box-shadow inset 2px 2px 5px
+            &.selection
+                width 0%
+                z-index 1
+                border-radius none
+                background linear-gradient(top, darken(#31BFFF, 10%), darken(#31BFFF, 20%))
+                box-shadow none
+        &.pointer
+            cursor pointer
+            width 13px
+            height 13px
+            top -4px
+            background-color white
+            border 1px solid darken(gray, 30%)
+            z-index 2
+            border-radius 1em/1em
+            box-shadow inset 0px -1px 3px gray
+            &:hover
+                box-shadow inset 0px -1px 3px gray, inset 0px -1px 3px darken(#31BFFF, 30%)
+            &:active
+                box-shadow inset 0px -1px 3px gray, 0px 0px 8px darken(#31BFFF, 30%)
+            &:after
+                content ''
+                width 7px
+                height 7px
+                position absolute
+                top 3px
+                left 3px
+                border-radius 1em/1em
+                box-shadow inset 0px 2px 3px gray
+        &.bubble
+            cursor default
+            top -20px
+            padding 1px 3px 1px 3px
+            font-size 0.7em
+            font-family sans-serif
+            &.selection
+                top 13px
+            &.limit
+                color gray
