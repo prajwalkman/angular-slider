@@ -1,0 +1,3 @@
+[submodule "angular-slider"]
+	path = angular-slider
+	url = https://github.com/prajwalkman/angular-slider.git

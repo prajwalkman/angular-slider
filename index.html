@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="app">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -7,7 +7,11 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="angular-slider/angular-slider.css">
     <script src="javascripts/scale.fix.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
+    <script src="angular-slider/angular-slider.js"></script>
+    <script src="javascripts/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -45,6 +49,12 @@
 &lt;/ul&gt;
 </code></pre>
 
+<div ng-controller="ItemCtrl">
+  <p>Name: {{item.name}}</p>
+  <p>Cost: {{item.cost}}</p>
+  <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost"></slider>
+</div>
+
 <h3>Range:</h3>
 
 <pre><code>&lt;ul&gt;
@@ -52,10 +62,17 @@
         &lt;p&gt;Name: {{position.name}}&lt;/p&gt;
         &lt;p&gt;Minimum Age: {{position.minAge}}&lt;/p&gt; 
         &lt;p&gt;Maximum Age: {{position.maxAge}}&lt;/p&gt; 
-        &lt;slider floor="10" ceiling="60" ng-model-low="position.minAge" ng-model-high="position.maxAge"&gt;&lt;/slider&gt;
+        &lt;slider floor="10" ceiling="60" precision="0" step="1" ng-model-low="position.minAge" ng-model-high="position.maxAge"&gt;&lt;/slider&gt;
     &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
+
+<div ng-controller="PositionCtrl">
+  <p>Position Name: {{position.name}}</p>
+  <p>Minimum Age: {{position.minAge}}</p>
+  <p>Maximum Age: {{position.maxAge}}</p>
+  <slider floor="10" ceiling="60" ng-model-low="position.minAge" ng-model-high="position.maxAge"></slider>
+</div>
 
 <h3>Formatting:</h3>
 
@@ -69,6 +86,12 @@ In your controller:</p>
 
 <pre><code>&lt;slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"&gt;&lt;/slider&gt;
 </code></pre>
+
+<div ng-controller="ItemCtrl">
+  <p>Name: {{item.name}}</p>
+  <p>Cost: {{item.cost}}</p>
+  <slider floor="100" ceiling="1000" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
+</div>
 
 <h3>Known issues:</h3>
 
