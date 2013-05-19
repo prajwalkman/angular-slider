@@ -30,7 +30,7 @@
 
       </header>
       <section>
-        <h1>angular-slider (WIP)</h1>
+        <h1>angular-slider</h1>
 
 <p>Slider directive implementation for AngularJS, without jQuery dependencies. Requires AngularJS v1.1.4 or higher (optional isolate scope bindings support).</p>
 
@@ -57,6 +57,19 @@
 &lt;/ul&gt;
 </code></pre>
 
+<h3>Formatting:</h3>
+
+<p>Raw data can be formatted as text using the <em>translate</em> attribute.
+In your controller:</p>
+
+<pre><code>$scope.currencyFormatting = function(value) { return value.toString() + " $" }
+</code></pre>
+
+<p>And your HTML:</p>
+
+<pre><code>&lt;slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"&gt;&lt;/slider&gt;
+</code></pre>
+
 <h3>Known issues:</h3>
 
 <ol>
@@ -67,6 +80,7 @@ Example: In the above snippet, it would be a very bad idea to order the list by 
 <ol>
 <li>Touch events support</li>
 <li>Smooth curve heterogeneity</li>
+<li>Filters support</li>
 </ol>
       </section>
       <footer>
