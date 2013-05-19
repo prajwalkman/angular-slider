@@ -7,7 +7,6 @@ SLIDER_TAG  = 'slider'
 
 angularize      = (element) -> angular.element element
 pixelize        = (position) -> "#{position}px"
-percentize      = (position) -> "#{position}%"
 addAnimation    = (elements) -> element.addClass 'animated' for element in elements
 removeAnimation = (elements) -> element.removeClass 'animated' for element in elements
 hide            = (element) -> element.css opacity: 0
@@ -42,7 +41,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    templateUrl: '/partials/slider_template.html'
+    templateUrl: 'slider-template.html'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
@@ -90,8 +89,8 @@ sliderDirective = ($timeout) ->
                 pointerHalfWidth = halfWidth minPtr
                 barWidth = width fullBar
 
-                minOffset = 0 - pointerHalfWidth
-                maxOffset = barWidth - pointerHalfWidth
+                minOffset = 0
+                maxOffset = barWidth - width(minPtr)
 
                 minValue = parseFloat attributes.floor
                 maxValue = parseFloat attributes.ceiling
@@ -105,6 +104,7 @@ sliderDirective = ($timeout) ->
                 # Translation functions
                 percentOffset = (offset) -> ((offset - minOffset) / offsetRange) * 100
                 percentValue = (value) -> ((value - minValue) / valueRange) * 100
+                percentToOffset = (percent) -> pixelize percent * offsetRange / 100
 
                 # Fit bubble to bar width
                 fitToBar = (element) -> offset element, pixelize(Math.min (Math.max 0, offsetLeft(element)), (barWidth - width(element)))
@@ -112,14 +112,14 @@ sliderDirective = ($timeout) ->
                 setPointers = ->
                     offset ceilBub, pixelize(barWidth - width(ceilBub))
                     newLowValue = percentValue scope[refLow]
-                    offset minPtr, percentize(newLowValue)
+                    offset minPtr, percentToOffset newLowValue
                     offset lowBub, pixelize(offsetLeft(minPtr) - (halfWidth lowBub) + pointerHalfWidth)
                     if range
                         newHighValue = percentValue scope[refHigh]
-                        offset maxPtr, percentize(newHighValue)
+                        offset maxPtr, percentToOffset newHighValue
                         offset highBub, pixelize(offsetLeft(maxPtr) - (halfWidth highBub) + pointerHalfWidth)
                         offset selBar, pixelize(offsetLeft(minPtr) + pointerHalfWidth)
-                        selBar.css width: percentize(newHighValue - newLowValue)
+                        selBar.css width: percentToOffset newHighValue - newLowValue
                         offset selBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(selBub))
                         offset cmbBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(cmbBub))
 
@@ -165,7 +165,7 @@ sliderDirective = ($timeout) ->
                         event.stopPropagation()
                         event.preventDefault()
                         ngDocument.bind 'mousemove', (event) ->
-                            newOffset = event.clientX - offsetLeft(element) - width(pointer)
+                            newOffset = event.clientX - offsetLeft(element) - halfWidth(pointer)
                             newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
                             newPercent = percentOffset newOffset
                             newValue = minValue + (valueRange * newPercent / 100.0)
