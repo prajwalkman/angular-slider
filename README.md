@@ -1,5 +1,5 @@
-angular-slider (WIP)
-====================
+angular-slider
+==============
 
 Slider directive implementation for AngularJS, without jQuery dependencies. Requires AngularJS v1.1.4 or higher (optional isolate scope bindings support).
 
@@ -24,6 +24,17 @@ Slider directive implementation for AngularJS, without jQuery dependencies. Requ
         </li>
     </ul>
 
+### Formatting:
+
+Raw data can be formatted as text using the _translate_ attribute.
+In your controller:
+
+    $scope.currencyFormatting = function(value) { return value.toString() + " $" }
+
+And your HTML:
+
+    <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
+    
 ### Known issues:
   
 1. When applying filters or orders within an ng-repeat directive, the element can abruptly change its position when the value attached to the slider causes a filter to activate or the order to change. 
@@ -33,3 +44,4 @@ Example: In the above snippet, it would be a very bad idea to order the list by 
 
 1. Touch events support
 2. Smooth curve heterogeneity
+3. Filters support
