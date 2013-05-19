@@ -62,7 +62,7 @@
         &lt;p&gt;Name: {{position.name}}&lt;/p&gt;
         &lt;p&gt;Minimum Age: {{position.minAge}}&lt;/p&gt; 
         &lt;p&gt;Maximum Age: {{position.maxAge}}&lt;/p&gt; 
-        &lt;slider floor="10" ceiling="60" precision="0" step="1" ng-model-low="position.minAge" ng-model-high="position.maxAge"&gt;&lt;/slider&gt;
+        &lt;slider floor="10" ceiling="60" ng-model-low="position.minAge" ng-model-high="position.maxAge"&gt;&lt;/slider&gt;
     &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
@@ -84,7 +84,7 @@ In your controller:</p>
 
 <p>And your HTML:</p>
 
-<pre><code>&lt;slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"&gt;&lt;/slider&gt;
+<pre><code>&lt;slider floor="100" ceiling="1000" precision="2" ng-model="item.cost" translate="currencyFormatting"&gt;&lt;/slider&gt;
 </code></pre>
 
 <div ng-controller="ItemCtrl">
