@@ -82,6 +82,8 @@ sliderDirective = ($timeout) ->
 
             dimensions = ->
                 # roundStep the initial score values
+                scope.precision ?= 0
+                scope.step ?= 1
                 scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step)) for value in watchables
                 scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step))
                 
