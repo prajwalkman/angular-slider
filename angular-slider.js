@@ -149,8 +149,14 @@
             }
             pointerHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = void 0;
             dimensions = function() {
-              var value, _j, _len1;
+              var value, _j, _len1, _ref2, _ref3;
 
+              if ((_ref2 = scope.precision) == null) {
+                scope.precision = 0;
+              }
+              if ((_ref3 = scope.step) == null) {
+                scope.step = 1;
+              }
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
                 scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step));
