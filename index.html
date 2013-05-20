@@ -42,16 +42,16 @@
 
 <pre><code>&lt;ul&gt;
     &lt;li ng-repeat="item in items"&gt;
-        &lt;p&gt;Name: {{item.name}}&lt;/p&gt;
-        &lt;p&gt;Cost: {{item.cost}}&lt;/p&gt; 
+        &lt;p&gt;Name: &#123;&#123;item.name&#125;&#125;&lt;/p&gt;
+        &lt;p&gt;Cost: &#123;&#123;item.cost&#125;&#125;&lt;/p&gt; 
         &lt;slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost"&gt;&lt;/slider&gt;
     &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
 
 <div ng-controller="ItemCtrl">
-  <p>Name: {{item.name}}</p>
-  <p>Cost: {{item.cost}}</p>
+  <p>Name: &#123;&#123;item.name&#125;&#125;</p>
+  <p>Cost: &#123;&#123;item.cost&#125;&#125;</p>
   <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost"></slider>
 </div>
 
@@ -59,18 +59,18 @@
 
 <pre><code>&lt;ul&gt;
     &lt;li ng-repeat="position in positions"&gt;
-        &lt;p&gt;Name: {{position.name}}&lt;/p&gt;
-        &lt;p&gt;Minimum Age: {{position.minAge}}&lt;/p&gt; 
-        &lt;p&gt;Maximum Age: {{position.maxAge}}&lt;/p&gt; 
+        &lt;p&gt;Name: &#123;&#123;position.name&#125;&#125;&lt;/p&gt;
+        &lt;p&gt;Minimum Age: &#123;&#123;position.minAge&#125;&#125;&lt;/p&gt; 
+        &lt;p&gt;Maximum Age: &#123;&#123;position.maxAge&#125;&#125;&lt;/p&gt; 
         &lt;slider floor="10" ceiling="60" ng-model-low="position.minAge" ng-model-high="position.maxAge"&gt;&lt;/slider&gt;
     &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
 
 <div ng-controller="PositionCtrl">
-  <p>Position Name: {{position.name}}</p>
-  <p>Minimum Age: {{position.minAge}}</p>
-  <p>Maximum Age: {{position.maxAge}}</p>
+  <p>Position Name: &#123;&#123;position.name&#125;&#125;</p>
+  <p>Minimum Age: &#123;&#123;position.minAge&#125;&#125;</p>
+  <p>Maximum Age: &#123;&#123;position.maxAge&#125;&#125;</p>
   <slider floor="10" ceiling="60" ng-model-low="position.minAge" ng-model-high="position.maxAge"></slider>
 </div>
 
@@ -88,8 +88,8 @@ In your controller:</p>
 </code></pre>
 
 <div ng-controller="ItemCtrl">
-  <p>Name: {{item.name}}</p>
-  <p>Cost: {{item.cost}}</p>
+  <p>Name: &#123;&#123;item.name&#125;&#125;</p>
+  <p>Cost: &#123;&#123;item.cost&#125;&#125;</p>
   <slider floor="100" ceiling="1000" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
 </div>
 
