@@ -1,6 +1,6 @@
 {
   "name": "angular-slider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Slider directive implementation for AngularJS, without jQuery dependencies.",
   "main": "angular-slider.js",
   "scripts": {
@@ -16,6 +16,13 @@
     "jquery",
     "jquery-ui"
   ],
+  "devDependencies": {
+    "stylus": "latest",
+    "nib": "latest",
+    "coffee-script": "latest",
+    "uglifier": "latest",
+    "jade": "latest"
+  },
   "author": "Prajwal K Manjunath",
   "license": "MIT",
   "readmeFilename": "README.md",

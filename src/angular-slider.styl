@@ -29,34 +29,33 @@ slider
                 box-shadow none
         &.pointer
             cursor pointer
-            width 13px
-            height 13px
-            top -4px
+            width 20px
+            height 20px
+            top -8px
             background-color white
-            border 1px solid darken(gray, 30%)
+            border 1px solid black
             z-index 2
             border-radius 1em/1em
-            box-shadow inset 0px -1px 3px gray
-            &:hover
-                box-shadow inset 0px -1px 3px gray, inset 0px -1px 3px darken(#31BFFF, 30%)
-            &:active
-                box-shadow inset 0px -1px 3px gray, 0px 0px 8px darken(#31BFFF, 30%)
             &:after
                 content ''
-                width 7px
-                height 7px
+                background-color gray
+                width 8px
+                height 8px
                 position absolute
-                top 3px
-                left 3px
+                top 6px
+                left 6px
                 border-radius 1em/1em
-                box-shadow inset 0px 2px 3px gray
+            &:hover:after
+                background-color black
+            &.active:after
+                background-color red
         &.bubble
             cursor default
-            top -20px
+            top -22px
             padding 1px 3px 1px 3px
             font-size 0.7em
             font-family sans-serif
             &.selection
-                top 13px
+                top 15px
             &.limit
                 color gray

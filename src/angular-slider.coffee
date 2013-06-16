@@ -7,8 +7,6 @@ SLIDER_TAG  = 'slider'
 
 angularize      = (element) -> angular.element element
 pixelize        = (position) -> "#{position}px"
-addAnimation    = (elements) -> element.addClass 'animated' for element in elements
-removeAnimation = (elements) -> element.removeClass 'animated' for element in elements
 hide            = (element) -> element.css opacity: 0
 show            = (element) -> element.css opacity: 1
 offset          = (element, position) -> element.css left: position
@@ -27,6 +25,15 @@ roundStep       = (value, precision, step) ->
     decimals = Math.pow 10, precision
     roundedValue = steppedValue * decimals / decimals
     roundedValue.toFixed precision
+inputEvents =
+    mouse:
+        start: 'mousedown'
+        move:  'mousemove'
+        end:   'mouseup'
+    touch:
+        start: 'touchstart'
+        move:  'touchmove'
+        end:   'touchend'
 
 # DIRECTIVE DEFINITION
 
@@ -41,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    templateUrl: 'slider-template.html'
+    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
@@ -73,7 +80,7 @@ sliderDirective = ($timeout) ->
 
         post: (scope, element, attributes) ->
 
-            bindMouse = false
+            boundToInputs = false
             ngDocument = angularize document
             unless attributes.translate
                 scope.translate = (value) -> value.value
@@ -161,36 +168,50 @@ sliderDirective = ($timeout) ->
                             show ceilBub
 
 
-                bindMouseToPointer = (pointer, ref) ->
-                    pointer.bind 'mousedown', (event) ->
+                bindToInputEvents = (pointer, ref, events) ->
+                    onEnd = ->
+                        pointer.removeClass 'active'
+                        ngDocument.unbind events.move
+                        ngDocument.unbind events.end
+                    onMove = (event) ->
+                        eventX = event.clientX || event.touches[0].clientX
+                        newOffset = eventX - offsetLeft(element) - halfWidth(pointer)
+                        newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
+                        newPercent = percentOffset newOffset
+                        newValue = minValue + (valueRange * newPercent / 100.0)
+                        if range
+                            if ref is refLow
+                                if newValue > scope[refHigh]
+                                    ref = refHigh
+                                    minPtr.removeClass 'active'
+                                    maxPtr.addClass 'active'
+                            else
+                                if newValue < scope[refLow]
+                                    ref = refLow 
+                                    maxPtr.removeClass 'active'
+                                    minPtr.addClass 'active'
+                        newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step))
+                        scope[ref] = newValue
+                        scope.$apply()
+                    onStart = (event) ->
+                        pointer.addClass 'active'
                         dimensions()
                         event.stopPropagation()
                         event.preventDefault()
-                        ngDocument.bind 'mousemove', (event) ->
-                            newOffset = event.clientX - offsetLeft(element) - halfWidth(pointer)
-                            newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
-                            newPercent = percentOffset newOffset
-                            newValue = minValue + (valueRange * newPercent / 100.0)
-                            if range
-                                if ref is refLow
-                                    ref = refHigh if newValue > scope[refHigh]
-                                else
-                                    ref = refLow if newValue < scope[refLow]
-                            newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step))
-                            scope[ref] = newValue
-                            scope.$apply()
-                        ngDocument.bind 'mouseup', ->
-                            ngDocument.unbind 'mousemove'
-                            ngDocument.unbind 'mouseup'
+                        ngDocument.bind events.move, onMove
+                        ngDocument.bind events.end, onEnd
+                    pointer.bind events.start, onStart
 
                 setBindings = ->
-                    bindMouse = true
-                    bindMouseToPointer minPtr, refLow
-                    bindMouseToPointer maxPtr, refHigh
+                    boundToInputs = true
+                    bind = (method) ->
+                        bindToInputEvents minPtr, refLow, inputEvents[method]
+                        bindToInputEvents maxPtr, refHigh, inputEvents[method]
+                    bind(inputMethod) for inputMethod in ['touch', 'mouse']
 
                 setPointers()
                 adjustBubbles()
-                setBindings() unless bindMouse
+                setBindings() unless boundToInputs
 
             $timeout updateDOM
             scope.$watch w, updateDOM for w in watchables
