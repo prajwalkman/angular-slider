@@ -48,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
+    template: '<div><span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span></div>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
@@ -58,8 +58,9 @@ sliderDirective = ($timeout) ->
         range = !attributes.ngModel? and (attributes.ngModelLow? and attributes.ngModelHigh?)
 
         # Get references to template elements
+        [innerDiv] = (angularize(e) for e in element.children())
         [fullBar, selBar, minPtr, maxPtr, selBub,
-            flrBub, ceilBub, lowBub, highBub, cmbBub] = (angularize(e) for e in element.children())
+            flrBub, ceilBub, lowBub, highBub, cmbBub] = (angularize(e) for e in innerDiv.children())
         
         # Shorthand references to the 2 model scopes
         refLow = if range then 'ngModelLow' else 'ngModel'

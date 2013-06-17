@@ -1,4 +1,5 @@
-slider{display:inline-block;position:relative;height:7px;width:100%;margin:25px 5px 25px 5px;}
+slider{display:inline-block;height:7px;width:100%;margin:25px 0;padding:0 5px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;}
+slider div{position:relative;width:100%;height:100%}
 slider span{white-space:nowrap;position:absolute;display:inline-block;}
 slider span.base{width:100%;height:100%;padding:0}
 slider span.bar{width:100%;height:100%;z-index:0;-webkit-border-radius:1em/1em;border-radius:1em/1em;background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #c0c0c0), color-stop(1, #8d8d8d));background:-webkit-linear-gradient(top, #c0c0c0 0%, #8d8d8d 100%);background:-moz-linear-gradient(top, #c0c0c0 0%, #8d8d8d 100%);background:-o-linear-gradient(top, #c0c0c0 0%, #8d8d8d 100%);background:-ms-linear-gradient(top, #c0c0c0 0%, #8d8d8d 100%);background:linear-gradient(top, #c0c0c0 0%, #8d8d8d 100%);-webkit-box-shadow:inset 2px 2px 5px;box-shadow:inset 2px 2px 5px;}
