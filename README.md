@@ -42,7 +42,7 @@ Example: In the above snippet, it would be a very bad idea to order the list by 
 
 ### Roadmap:
 
-1. Touch events support
+1. ~~Touch events support~~
 2. Smooth curve heterogeneity
 3. Filters support
 
