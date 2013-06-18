@@ -20,7 +20,7 @@
     "stylus": "latest",
     "nib": "latest",
     "coffee-script": "latest",
-    "uglifier": "latest",
+    "uglify-js": "latest",
     "jade": "latest"
   },
   "author": "Prajwal K Manjunath",
