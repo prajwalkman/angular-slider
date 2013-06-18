@@ -90,7 +90,8 @@ In your controller:</p>
 <div ng-controller="ItemCtrl">
   <p>Name: &#123;&#123;item.name&#125;&#125;</p>
   <p>Cost: &#123;&#123;item.cost&#125;&#125;</p>
-  <slider floor="100" ceiling="1000" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
+  <p>Potatoes cost <slider class="sliderholder" floor="100" ceiling="1000" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>?! No damn way!</p>
+  <p> Attach a class to the slider to override the slider's width to inline it amongst your text. </p>
 </div>
 
 <h3>Known issues:</h3>

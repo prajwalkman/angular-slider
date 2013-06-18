@@ -25,6 +25,9 @@ time, mark, audio, video {
 
 /* Base text styles */
 
+.sliderholder {
+  width: 400px;
+}
 
 slider span.bubble {
   font-size: 12px !important; 
