@@ -217,9 +217,14 @@ sliderDirective = ($timeout) ->
             scope.$watch w, updateDOM for w in watchables
             window.addEventListener "resize", updateDOM
 
+qualifiedDirectiveDefinition = [
+    '$timeout'
+    sliderDirective
+]
+
 module = (window, angular) ->
     angular
         .module(MODULE_NAME, [])
-        .directive(SLIDER_TAG, sliderDirective)
+        .directive(SLIDER_TAG, qualifiedDirectiveDefinition)
 
 module window, window.angular
