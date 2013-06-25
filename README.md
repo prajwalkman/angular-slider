@@ -35,6 +35,25 @@ And your HTML:
 
     <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
     
+### Usage:
+
+Make sure to load AngularJS first, and then `angular-slider.js`. Also include the related `angular-slider.css`.
+
+The module is named `uiSlider`. To enable it, you must simply list it as a dependency in your app. Example:
+
+    var app = angular.module('app', ['uiSlider', 'ngResource', ...]);
+    
+You can then use it in your templates like so:
+
+    <html ng-app='app'>
+        ...
+        <body>
+            ...
+            <slider ...></slider>
+        </body>
+    </html>
+
+
 ### Known issues:
   
 1. When applying filters or orders within an ng-repeat directive, the element can abruptly change its position when the value attached to the slider causes a filter to activate or the order to change. 
