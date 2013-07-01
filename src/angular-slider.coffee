@@ -11,7 +11,11 @@ hide            = (element) -> element.css opacity: 0
 show            = (element) -> element.css opacity: 1
 offset          = (element, position) -> element.css left: position
 halfWidth       = (element) -> element[0].offsetWidth / 2
-offsetLeft      = (element) -> element[0].offsetLeft
+offsetLeft      = (element) -> 
+    parentOffset = 0
+    if (element[0].offsetParent?)
+        parentOffset = element[0].offsetParent.offsetLeft
+    element[0].offsetLeft  + parentOffset
 width           = (element) -> element[0].offsetWidth
 gap             = (element1, element2) -> offsetLeft(element2) - offsetLeft(element1) - width(element1)
 bindHtml        = (element, html) -> element.attr 'ng-bind-html-unsafe', html
