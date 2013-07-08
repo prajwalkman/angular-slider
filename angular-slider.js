@@ -52,13 +52,13 @@
     return element.attr('ng-bind-html-unsafe', html);
   };
 
-  roundStep = function(value, precision, step) {
+  roundStep = function(value, precision, step, floor) {
     var decimals, remainder, roundedValue, steppedValue;
 
     if (step == null) {
       step = 1 / Math.pow(10, precision);
     }
-    remainder = value % step;
+    remainder = (value - floor) % step;
     steppedValue = remainder > (step / 2) ? value + step - remainder : value - remainder;
     decimals = Math.pow(10, precision);
     roundedValue = steppedValue * decimals / decimals;
@@ -150,9 +150,9 @@
               }
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
-                scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step));
+                scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
               }
-              scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step));
+              scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
               pointerHalfWidth = halfWidth(minPtr);
               barWidth = width(fullBar);
               minOffset = 0;
@@ -276,7 +276,7 @@
                       }
                     }
                   }
-                  newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step));
+                  newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
                   scope[ref] = newValue;
                   return scope.$apply();
                 };
