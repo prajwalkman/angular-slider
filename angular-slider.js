@@ -260,7 +260,7 @@
                   var eventX, newOffset, newPercent, newValue;
 
                   eventX = event.clientX || event.touches[0].clientX;
-                  newOffset = eventX - offsetLeft(element) - element[0].getBoundingClientRect().left;
+                  newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth;
                   newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset);
                   newPercent = percentOffset(newOffset);
                   newValue = minValue + (valueRange * newPercent / 100.0);
