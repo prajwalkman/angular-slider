@@ -92,7 +92,9 @@
         ngModel: '=?',
         ngModelLow: '=?',
         ngModelHigh: '=?',
-        translate: '&'
+        translate: '&',
+        moveStart: '=?',
+        moveEnd: '=?'
       },
       template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>',
       compile: function(element, attributes) {
@@ -253,6 +255,7 @@
 
                 onEnd = function() {
                   pointer.removeClass('active');
+                  scope.moveEnd();
                   ngDocument.unbind(events.move);
                   return ngDocument.unbind(events.end);
                 };
@@ -288,6 +291,7 @@
                   dimensions();
                   event.stopPropagation();
                   event.preventDefault();
+                  scope.moveStart();
                   ngDocument.bind(events.move, onMove);
                   return ngDocument.bind(events.end, onEnd);
                 };

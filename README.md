@@ -35,6 +35,20 @@ And your HTML:
 
     <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" translate="currencyFormatting"></slider>
     
+### Move start and end events:
+
+It is possible to hook on events of grabbing and releasing of slider
+
+In your controller:
+
+    $scope.startMoving = function() { console.log('slider was grabbed') }
+    $scope.endMoving = function() { console.log('slider was released') }
+
+And your HTML:
+
+    <slider floor="100" ceiling="1000" step="50" precision="2" ng-model="item.cost" move-start="startMoving" move-end="endMoving"></slider>
+
+
 ### Usage:
 
 Make sure to load AngularJS first, and then `angular-slider.js`. Also include the related `angular-slider.css`.
