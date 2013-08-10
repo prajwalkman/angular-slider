@@ -259,7 +259,7 @@
                 onMove = function(event) {
                   var eventX, newOffset, newPercent, newValue;
 
-                  eventX = event.clientX || event.touches[0].clientX;
+                  eventX = event.clientX || (event.touches ? event.touches[0].clientX : null);
                   newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth;
                   newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset);
                   newPercent = percentOffset(newOffset);
