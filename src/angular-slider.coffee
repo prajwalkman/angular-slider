@@ -114,6 +114,7 @@ sliderDirective = ($timeout) ->
                 percentOffset = (offset) -> ((offset - minOffset) / offsetRange) * 100
                 percentValue = (value) -> ((value - minValue) / valueRange) * 100
                 percentToOffset = (percent) -> pixelize percent * offsetRange / 100
+                percentToValue = (percent) -> (maxValue - minValue) * percent / 100 + minValue
 
                 # Fit bubble to bar width
                 fitToBar = (element) -> offset element, pixelize(Math.min (Math.max 0, offsetLeft(element)), (barWidth - width(element)))
@@ -168,7 +169,7 @@ sliderDirective = ($timeout) ->
                             show ceilBub
 
 
-                bindToInputEvents = (pointer, ref, events) ->
+                bindPointerEvents = (pointer, ref, events) ->
                     onEnd = ->
                         pointer.removeClass 'active'
                         ngDocument.unbind events.move
@@ -202,12 +203,62 @@ sliderDirective = ($timeout) ->
                         ngDocument.bind events.end, onEnd
                     pointer.bind events.start, onStart
 
+                bindSelectionBarEvents = (selBar, events) ->
+                    offsetPointerStart = undefined
+                    offsetLowStart = undefined
+                    offsetHighStart = undefined
+
+                    onStart = (event) ->
+                        event.stopPropagation()
+                        event.preventDefault()
+
+                        offsetPointerStart = event.clientX || event.touches[0].clientX
+                        offsetLowStart = parseInt percentToOffset percentValue scope[refLow], 10
+                        offsetHighStart = parseInt percentToOffset percentValue scope[refHigh], 10
+
+                        ngDocument.bind events.move, onMove
+                        ngDocument.bind events.end, onEnd
+
+                    onMove = (event) ->
+                        offsetPointerCurrent = event.clientX || event.touches[0].clientX
+                        offsetPointerDelta = offsetPointerCurrent - offsetPointerStart
+
+                        offsetLowCurrent = offsetLowStart + offsetPointerDelta
+                        offsetHighCurrent = offsetHighStart + offsetPointerDelta
+
+                        if offsetLowCurrent < minOffset
+                            offsetLowCurrent = minOffset
+                            offsetHighCurrent = offsetLowCurrent + (offsetHighStart - offsetLowStart)
+
+                        if offsetHighCurrent > maxOffset
+                            offsetHighCurrent = maxOffset
+                            offsetLowCurrent = offsetHighCurrent + (offsetLowStart - offsetHighStart)
+
+                        valueLowCurrent = percentToValue percentOffset offsetLowCurrent
+                        valueHighCurrent = percentToValue percentOffset offsetHighCurrent
+
+                        scope[refLow] = valueLowCurrent
+                        scope[refHigh] = valueHighCurrent
+
+                        scope.$apply()
+
+                    onEnd = () ->
+                        ngDocument.unbind events.move
+                        ngDocument.unbind events.end
+
+                    selBar.bind events.start, onStart
+
                 setBindings = ->
                     boundToInputs = true
                     bind = (method) ->
-                        bindToInputEvents minPtr, refLow, inputEvents[method]
-                        bindToInputEvents maxPtr, refHigh, inputEvents[method]
+                        bindPointerEvents minPtr, refLow, inputEvents[method]
+                        bindPointerEvents maxPtr, refHigh, inputEvents[method]
                     bind(inputMethod) for inputMethod in ['touch', 'mouse']
+
+                    if range
+                        ((method) ->
+                            bindSelectionBarEvents selBar, inputEvents[method]
+                        )(inputMethod) for inputMethod in ['touch', 'mouse']
 
                 setPointers()
                 adjustBubbles()
