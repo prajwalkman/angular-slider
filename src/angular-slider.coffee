@@ -110,6 +110,22 @@ sliderDirective = ($timeout) ->
             updateDOM = ->
                 dimensions()
 
+                getX = (e) ->
+                    # Desktop event
+                    return e.clientX if e.clientX
+
+                    checkTouch = (e) ->
+                        if e.touches && e.touches[0] && e.touches[0].clientX
+                            return e.touches[0].clientX
+                        else
+                            return false
+
+                    # Touch events
+                    return checkTouch e if checkTouch e
+                    return checkTouch e.originalEvent if checkTouch e.originalEvent
+
+                    return false
+
                 # Translation functions
                 percentOffset = (offset) -> ((offset - minOffset) / offsetRange) * 100
                 percentValue = (value) -> ((value - minValue) / valueRange) * 100
@@ -174,7 +190,7 @@ sliderDirective = ($timeout) ->
                         ngDocument.unbind events.move
                         ngDocument.unbind events.end
                     onMove = (event) ->
-                        eventX = event.clientX || event.touches[0].clientX
+                        eventX = getX(event)
                         newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth
                         newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
                         newPercent = percentOffset newOffset
