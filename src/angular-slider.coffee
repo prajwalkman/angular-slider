@@ -48,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
+    template: '<span class="bar"></span><span class="bar selection"></span><span class="bar selection-drag-handle"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
@@ -58,7 +58,7 @@ sliderDirective = ($timeout) ->
         range = !attributes.ngModel? and (attributes.ngModelLow? and attributes.ngModelHigh?)
 
         # Get references to template elements
-        [fullBar, selBar, minPtr, maxPtr, selBub,
+        [fullBar, selBar, selDragHandleBar, minPtr, maxPtr, selBub,
             flrBub, ceilBub, lowBub, highBub, cmbBub] = (angularize(e) for e in element.children())
         
         # Shorthand references to the 2 model scopes
@@ -72,7 +72,7 @@ sliderDirective = ($timeout) ->
 
         # Remove range specific elements if not a range slider
         unless range
-            element.remove() for element in [selBar, maxPtr, selBub, highBub, cmbBub]
+            element.remove() for element in [selBar, selDragHandleBar, maxPtr, selBub, highBub, cmbBub]
 
         # Scope values to watch for changes
         watchables = [refLow, 'floor', 'ceiling']
@@ -128,8 +128,12 @@ sliderDirective = ($timeout) ->
                         newHighValue = percentValue scope[refHigh]
                         offset maxPtr, percentToOffset newHighValue
                         offset highBub, pixelize(offsetLeft(maxPtr) - (halfWidth highBub) + pointerHalfWidth)
-                        offset selBar, pixelize(offsetLeft(minPtr) + pointerHalfWidth)
-                        selBar.css width: percentToOffset newHighValue - newLowValue
+
+                        ((bar) ->
+                            offset bar, pixelize(offsetLeft(minPtr) + pointerHalfWidth)
+                            bar.css width: percentToOffset newHighValue - newLowValue
+                        )(bar) for bar in [selBar, selDragHandleBar]
+
                         offset selBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(selBub))
                         offset cmbBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(cmbBub))
 
@@ -257,7 +261,7 @@ sliderDirective = ($timeout) ->
 
                     if range
                         ((method) ->
-                            bindSelectionBarEvents selBar, inputEvents[method]
+                            bindSelectionBarEvents selDragHandleBar, inputEvents[method]
                         )(inputMethod) for inputMethod in ['touch', 'mouse']
 
                 setPointers()

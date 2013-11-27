@@ -43,6 +43,14 @@ slider span.bar.selection {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+slider span.bar.selection-drag-handle {
+  height: 21px;
+  margin-top: -7px;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  z-index: 2;
+}
 slider span.pointer {
   cursor: pointer;
   width: 20px;

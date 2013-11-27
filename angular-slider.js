@@ -77,9 +77,9 @@
         ngModelHigh: '=?',
         translate: '&'
       },
-      template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>',
+      template: '<span class="bar"></span><span class="bar selection"></span><span class="bar selection-drag-handle"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>',
       compile: function(element, attributes) {
-        var ceilBub, cmbBub, e, flrBub, fullBar, highBub, lowBub, maxPtr, minPtr, range, refHigh, refLow, selBar, selBub, watchables, _i, _len, _ref, _ref2;
+        var ceilBub, cmbBub, e, flrBub, fullBar, highBub, lowBub, maxPtr, minPtr, range, refHigh, refLow, selBar, selBub, selDragHandleBar, watchables, _i, _len, _ref, _ref2;
         if (attributes.translate) {
           attributes.$set('translate', "" + attributes.translate + "(value)");
         }
@@ -93,7 +93,7 @@
             _results.push(angularize(e));
           }
           return _results;
-        })(), fullBar = _ref[0], selBar = _ref[1], minPtr = _ref[2], maxPtr = _ref[3], selBub = _ref[4], flrBub = _ref[5], ceilBub = _ref[6], lowBub = _ref[7], highBub = _ref[8], cmbBub = _ref[9];
+        })(), fullBar = _ref[0], selBar = _ref[1], selDragHandleBar = _ref[2], minPtr = _ref[3], maxPtr = _ref[4], selBub = _ref[5], flrBub = _ref[6], ceilBub = _ref[7], lowBub = _ref[8], highBub = _ref[9], cmbBub = _ref[10];
         refLow = range ? 'ngModelLow' : 'ngModel';
         refHigh = 'ngModelHigh';
         bindHtml(selBub, "'Range: ' + translate({value: diff})");
@@ -101,7 +101,7 @@
         bindHtml(highBub, "translate({value: " + refHigh + "})");
         bindHtml(cmbBub, "translate({value: " + refLow + "}) + ' - ' + translate({value: " + refHigh + "})");
         if (!range) {
-          _ref2 = [selBar, maxPtr, selBub, highBub, cmbBub];
+          _ref2 = [selBar, selDragHandleBar, maxPtr, selBub, highBub, cmbBub];
           for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
             element = _ref2[_i];
             element.remove();
@@ -163,7 +163,7 @@
                 return offset(element, pixelize(Math.min(Math.max(0, offsetLeft(element)), barWidth - width(element))));
               };
               setPointers = function() {
-                var newHighValue, newLowValue;
+                var bar, newHighValue, newLowValue, _fn, _j, _len2, _ref3;
                 offset(ceilBub, pixelize(barWidth - width(ceilBub)));
                 newLowValue = percentValue(scope[refLow]);
                 offset(minPtr, percentToOffset(newLowValue));
@@ -172,10 +172,17 @@
                   newHighValue = percentValue(scope[refHigh]);
                   offset(maxPtr, percentToOffset(newHighValue));
                   offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + pointerHalfWidth));
-                  offset(selBar, pixelize(offsetLeft(minPtr) + pointerHalfWidth));
-                  selBar.css({
-                    width: percentToOffset(newHighValue - newLowValue)
-                  });
+                  _ref3 = [selBar, selDragHandleBar];
+                  _fn = function(bar) {
+                    offset(bar, pixelize(offsetLeft(minPtr) + pointerHalfWidth));
+                    return bar.css({
+                      width: percentToOffset(newHighValue - newLowValue)
+                    });
+                  };
+                  for (_j = 0, _len2 = _ref3.length; _j < _len2; _j++) {
+                    bar = _ref3[_j];
+                    _fn(bar);
+                  }
                   offset(selBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(selBub)));
                   return offset(cmbBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(cmbBub)));
                 }
@@ -328,7 +335,7 @@
                   for (_k = 0, _len3 = _ref4.length; _k < _len3; _k++) {
                     inputMethod = _ref4[_k];
                     _results.push((function(method) {
-                      return bindSelectionBarEvents(selBar, inputEvents[method]);
+                      return bindSelectionBarEvents(selDragHandleBar, inputEvents[method]);
                     })(inputMethod));
                   }
                   return _results;
