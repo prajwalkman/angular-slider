@@ -252,7 +252,12 @@
                 var onEnd, onMove, onStart;
 
                 onEnd = function() {
-                  pointer.removeClass('active');
+                  var ptr, _j, _len2, _ref3;
+                  _ref3 = [minPtr, maxPtr];
+                  for (_j = 0, _len2 = _ref3.length; _j < _len2; _j++) {
+                    ptr = _ref3[_j];
+                    ptr.removeClass('active');
+                  }
                   ngDocument.unbind(events.move);
                   return ngDocument.unbind(events.end);
                 };
