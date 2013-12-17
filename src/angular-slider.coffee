@@ -85,6 +85,9 @@ sliderDirective = ($timeout) ->
             unless attributes.translate
                 scope.translate = (value) -> value.value
 
+            sliderStyle = 'default'
+            sliderStyle = null unless angular.isUndefined attributes.sliderStyleNone
+
             pointerHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = undefined
 
             dimensions = ->
@@ -216,6 +219,9 @@ sliderDirective = ($timeout) ->
             $timeout updateDOM
             scope.$watch w, updateDOM for w in watchables
             window.addEventListener "resize", updateDOM
+
+            # Set style
+            element.addClass(sliderStyle) if sliderStyle
 
 qualifiedDirectiveDefinition = [
     '$timeout'

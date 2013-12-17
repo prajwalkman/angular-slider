@@ -54,6 +54,13 @@ You can then use it in your templates like so:
     </html>
 
 
+### Styling:
+
+You can deactivate the default styling with:
+
+	<slider slider-style-none ...  />
+	
+
 ### Known issues:
   
 1. When applying filters or orders within an ng-repeat directive, the element can abruptly change its position when the value attached to the slider causes a filter to activate or the order to change. 
