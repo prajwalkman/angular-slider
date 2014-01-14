@@ -14,7 +14,7 @@ halfWidth       = (element) -> element[0].offsetWidth / 2
 offsetLeft      = (element) -> element[0].offsetLeft
 width           = (element) -> element[0].offsetWidth
 gap             = (element1, element2) -> offsetLeft(element2) - offsetLeft(element1) - width(element1)
-bindHtml        = (element, html) -> element.attr 'ng-bind-html-unsafe', html
+bindHtml        = (element, html) -> element.attr 'ng-bind', html
 roundStep       = (value, precision, step, floor = 0) ->
     step ?= 1 / Math.pow(10, precision)
     remainder = (value - floor) % step
@@ -48,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
+    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind="translate({value: floor})" class="bubble limit"></span><span ng-bind="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
