@@ -1,7 +1,7 @@
 DEPRECATED
 ==========
 
-I am unable to maintain or update this repository any more. Jimdo GmbH has graciously accepted to maintain an updated fork here: https://github.com/Jimdo/angular-slider
+I am unable to maintain or update this repository any more. If you know a well maintained fork, let me know so I can link it here.
 
 
 angular-slider
