@@ -1,7 +1,9 @@
 DEPRECATED
 ==========
 
-I am unable to maintain or update this repository any more. If you know a well maintained fork, let me know so I can link it here.
+I am unable to maintain or update this repository any more. If you know more well maintained forks, let me know so I can link it here.
+
+Venturocket: http://github.com/venturocket/angular-slider
 
 
 angular-slider
