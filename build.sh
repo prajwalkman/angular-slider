@@ -1,9 +1,7 @@
-coffee -c src/angular-slider.coffee
+coffee -c slider.coffee
 
-mv src/angular-slider.js ./
+uglifyjs slider.js -mc > slider.min.js
 
-uglifyjs angular-slider.js -mc > angular-slider.min.js
-
-stylus src/angular-slider.styl -c --use ./node_modules/nib -o ./
-mv angular-slider.css angular-slider.min.css
-stylus src/angular-slider.styl --use ./node_modules/nib -o ./
+stylus slider.styl -c --use ./node_modules/nib -o ./
+mv slider.css slider.min.css
+stylus slider.styl --use ./node_modules/nib -o ./

@@ -1,6 +1,6 @@
 # CONSTANTS
 
-MODULE_NAME = 'uiSlider'
+MODULE_NAME = 'ui.slider'
 SLIDER_TAG  = 'slider'
 
 # HELPER FUNCTIONS

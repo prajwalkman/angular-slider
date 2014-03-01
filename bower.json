@@ -2,14 +2,7 @@
   "name": "angular-slider",
   "version": "0.1.7",
   "description": "Slider directive implementation for AngularJS, without jQuery dependencies.",
-  "main": "angular-slider.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/that70schris/angular-slider.git"
-  },
+  "main": "slider.js",
   "keywords": [
     "angular",
     "slider",
@@ -21,10 +14,13 @@
     "scss": "latest",
     "nib": "latest",
     "coffee-script": "latest",
-    "uglify-js": "latest",
-    "jade": "latest"
+    "uglify-js": "latest"
   },
-  "author": "Chris Bailey",
+  "author": "PopSugar",
   "license": "MIT",
   "readmeFilename": "README.md",
+  "ignore": ["*",
+    "!slider.js",
+    "!slider.scss"
+  ]
 }

@@ -2,7 +2,7 @@
 (function() {
   var MODULE_NAME, SLIDER_TAG, angularize, bindHtml, gap, halfWidth, hide, inputEvents, module, offset, offsetLeft, pixelize, qualifiedDirectiveDefinition, roundStep, show, sliderDirective, width;
 
-  MODULE_NAME = 'uiSlider';
+  MODULE_NAME = 'ui.slider';
 
   SLIDER_TAG = 'slider';
 
