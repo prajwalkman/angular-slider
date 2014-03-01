@@ -250,8 +250,10 @@
               };
               bindToInputEvents = function(pointer, ref, events) {
                 var onEnd, onMove, onStart;
+                var currentRef = ref;
 
                 onEnd = function() {
+                  currentRef = ref;
                   pointer.removeClass('active');
                   ngDocument.unbind(events.move);
                   return ngDocument.unbind(events.end);
@@ -265,22 +267,25 @@
                   newPercent = percentOffset(newOffset);
                   newValue = minValue + (valueRange * newPercent / 100.0);
                   if (range) {
-                    if (ref === refLow) {
-                      if (newValue > scope[refHigh]) {
-                        ref = refHigh;
-                        minPtr.removeClass('active');
-                        maxPtr.addClass('active');
-                      }
-                    } else {
-                      if (newValue < scope[refLow]) {
-                        ref = refLow;
-                        maxPtr.removeClass('active');
-                        minPtr.addClass('active');
-                      }
+                    switch(currentRef) {
+                      case refLow:
+                        if (newValue > scope[refHigh]) {
+                          currentRef = refHigh;
+                          minPtr.removeClass('active');
+                          maxPtr.addClass('active');
+                        }
+                        break;
+                      case refHigh:
+                        if (newValue < scope[refLow]) {
+                          currentRef = refLow;
+                          maxPtr.removeClass('active');
+                          minPtr.addClass('active');
+                        }
+                        break;
                     }
                   }
                   newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
-                  scope[ref] = newValue;
+                  scope[currentRef] = newValue;
                   return scope.$apply();
                 };
                 onStart = function(event) {

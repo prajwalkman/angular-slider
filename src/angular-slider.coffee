@@ -60,7 +60,7 @@ sliderDirective = ($timeout) ->
         # Get references to template elements
         [fullBar, selBar, minPtr, maxPtr, selBub,
             flrBub, ceilBub, lowBub, highBub, cmbBub] = (angularize(e) for e in element.children())
-        
+
         # Shorthand references to the 2 model scopes
         refLow = if range then 'ngModelLow' else 'ngModel'
         refHigh = 'ngModelHigh'
@@ -93,7 +93,7 @@ sliderDirective = ($timeout) ->
                 scope.step ?= 1
                 scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor)) for value in watchables
                 scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
-                
+
                 # Commonly used measurements
                 pointerHalfWidth = halfWidth minPtr
                 barWidth = width fullBar
@@ -105,7 +105,7 @@ sliderDirective = ($timeout) ->
                 maxValue = parseFloat attributes.ceiling
 
                 valueRange = maxValue - minValue
-                offsetRange = maxOffset - minOffset                
+                offsetRange = maxOffset - minOffset
 
             updateDOM = ->
                 dimensions()
@@ -170,6 +170,7 @@ sliderDirective = ($timeout) ->
 
                 bindToInputEvents = (pointer, ref, events) ->
                     onEnd = ->
+                        currentRef = ref
                         pointer.removeClass 'active'
                         ngDocument.unbind events.move
                         ngDocument.unbind events.end
@@ -180,18 +181,19 @@ sliderDirective = ($timeout) ->
                         newPercent = percentOffset newOffset
                         newValue = minValue + (valueRange * newPercent / 100.0)
                         if range
-                            if ref is refLow
-                                if newValue > scope[refHigh]
-                                    ref = refHigh
-                                    minPtr.removeClass 'active'
-                                    maxPtr.addClass 'active'
-                            else
-                                if newValue < scope[refLow]
-                                    ref = refLow 
-                                    maxPtr.removeClass 'active'
-                                    minPtr.addClass 'active'
+                            switch currentRef
+                                when refLow
+                                    if newValue > scope[refHigh]
+                                        currentRef = refHigh
+                                        minPtr.removeClass 'active'
+                                        maxPtr.addClass 'active'
+                                when refHigh
+                                    if newValue < scope[refLow]
+                                        currentRef = refLow
+                                        maxPtr.removeClass 'active'
+                                        minPtr.addClass 'active'
                         newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
-                        scope[ref] = newValue
+                        scope[currentRef] = newValue
                         scope.$apply()
                     onStart = (event) ->
                         pointer.addClass 'active'
