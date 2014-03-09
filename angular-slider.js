@@ -128,7 +128,7 @@
           watchables.push(refHigh);
         }
         return {
-          post: function(scope, element, attributes) {
+          post: function(scope, element, attributes, ngModelCtrl) {
             var barWidth, boundToInputs, dimensions, maxOffset, maxValue, minOffset, minValue, ngDocument, offsetRange, pointerHalfWidth, updateDOM, valueRange, w, _j, _len1;
             boundToInputs = false;
             ngDocument = angularize(document);
@@ -271,6 +271,9 @@
                   }
                   newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
                   scope[ref] = newValue;
+                  if (ref === 'ngModel') {
+                    ngModelCtrl.$setViewValue(newValue);
+                  }
                   return scope.$apply();
                 };
                 onStart = function(event) {

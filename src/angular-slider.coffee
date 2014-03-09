@@ -78,7 +78,7 @@ sliderDirective = ($timeout) ->
         watchables = [refLow, 'floor', 'ceiling']
         watchables.push refHigh if range
 
-        post: (scope, element, attributes) ->
+        post: (scope, element, attributes , ngModelCtrl) ->
 
             boundToInputs = false
             ngDocument = angularize document
@@ -192,6 +192,8 @@ sliderDirective = ($timeout) ->
                                     minPtr.addClass 'active'
                         newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
                         scope[ref] = newValue
+                        if ref is 'ngModel'
+                            ngModelCtrl.$setViewValue(newValue);
                         scope.$apply()
                     onStart = (event) ->
                         pointer.addClass 'active'
