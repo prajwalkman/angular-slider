@@ -60,7 +60,7 @@
     steppedValue = remainder > (step / 2) ? value + step - remainder : value - remainder;
     decimals = Math.pow(10, precision);
     roundedValue = steppedValue * decimals / decimals;
-    return roundedValue.toFixed(precision);
+    return parseFloat(roundedValue.toFixed(precision));
   };
 
   inputEvents = {
@@ -82,15 +82,19 @@
       scope: {
         floor: '@',
         ceiling: '@',
+        values: '=?',
+        range: '@',
         step: '@',
+        highlight: '@',
         precision: '@',
+        buffer: '@',
         ngModel: '=?',
         ngModelLow: '=?',
         ngModelHigh: '=?'
       },
-      template: '<span class="bar"></span> <span class="bar selection"></span> <span class="handle"></span> <span class="handle"></span> <span class="bubble limit">{{ floor }}</span> <span class="bubble limit">{{ ceiling }}</span> <span class="bubble low">{{ ngModelLow }}</span> <span class="bubble high">{{ ngModelHigh }}</span>',
+      template: '<div class="bar"><div class="selection"></div></div>\n<div class="handle low"></div><div class="handle high"></div>\n<div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>\n<div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>\n<div class="bubble value low">{{ values.length ? ( values[ngModelLow] || ngModelLow ) : ngModelLow }}</div>\n<div class="bubble value high">{{ values.length ? ( values[ngModelHigh] || ngModelHigh ) : ngModelHigh }}</div>',
       compile: function(element, attributes) {
-        var ceilBub, e, flrBub, fullBar, high, highBub, low, lowBub, maxPtr, minPtr, range, selBar, watchables, _i, _len, _ref, _ref1;
+        var bar, ceilBub, e, flrBub, highBub, lowBub, maxPtr, minPtr, range, selection, watchables, _i, _len, _ref, _ref1;
         range = (attributes.ngModel == null) && (attributes.ngModelLow != null) && (attributes.ngModelHigh != null);
         _ref = (function() {
           var _i, _len, _ref, _results;
@@ -101,19 +105,21 @@
             _results.push(angularize(e));
           }
           return _results;
-        })(), fullBar = _ref[0], selBar = _ref[1], minPtr = _ref[2], maxPtr = _ref[3], flrBub = _ref[4], ceilBub = _ref[5], lowBub = _ref[6], highBub = _ref[7];
-        low = range ? 'ngModelLow' : 'ngModel';
-        high = 'ngModelHigh';
+        })(), bar = _ref[0], minPtr = _ref[1], maxPtr = _ref[2], flrBub = _ref[3], ceilBub = _ref[4], lowBub = _ref[5], highBub = _ref[6];
+        selection = angularize(bar.children()[0]);
         if (!range) {
-          _ref1 = [selBar, maxPtr, highBub];
+          _ref1 = [maxPtr, highBub];
           for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
             element = _ref1[_i];
             element.remove();
           }
+          if (!attributes.highlight) {
+            selection.remove();
+          }
         }
-        watchables = [low, 'floor', 'ceiling'];
+        watchables = ['floor', 'ceiling', 'values', 'ngModelLow'];
         if (range) {
-          watchables.push(high);
+          watchables.push('ngModelHigh');
         }
         return {
           post: function(scope, element, attributes) {
@@ -122,29 +128,43 @@
             ngDocument = angularize(document);
             handleHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = void 0;
             dimensions = function() {
-              var value, _j, _len1;
-              if (scope.precision == null) {
-                scope.precision = 0;
-              }
+              var value, _j, _len1, _ref2;
               if (scope.step == null) {
                 scope.step = 1;
               }
+              if (scope.floor == null) {
+                scope.floor = 0;
+              }
+              if (scope.precision == null) {
+                scope.precision = 0;
+              }
+              if ((_ref2 = scope.values) != null ? _ref2.length : void 0) {
+                if (scope.ceiling == null) {
+                  scope.ceiling = scope.values.length - 1;
+                }
+              }
+              if (!range) {
+                if (scope.ngModelLow == null) {
+                  scope.ngModelLow = scope.ngModel;
+                }
+              }
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
-                scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
+                if (typeof value === 'number') {
+                  scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
+                }
               }
-              scope.diff = roundStep(scope[high] - scope[low], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
               handleHalfWidth = halfWidth(minPtr);
-              barWidth = width(fullBar);
+              barWidth = width(bar);
               minOffset = 0;
               maxOffset = barWidth - width(minPtr);
-              minValue = parseFloat(attributes.floor);
-              maxValue = parseFloat(attributes.ceiling);
+              minValue = parseFloat(scope.floor);
+              maxValue = parseFloat(scope.ceiling);
               valueRange = maxValue - minValue;
               return offsetRange = maxOffset - minOffset;
             };
             updateDOM = function() {
-              var adjustBubbles, bindToInputEvents, fitToBar, percentOffset, percentToOffset, percentValue, setBindings, setPointers;
+              var bindToInputEvents, fitToBar, percentOffset, percentToOffset, percentValue, setBindings, setPointers;
               dimensions();
               percentOffset = function(offset) {
                 return ((offset - minOffset) / offsetRange) * 100;
@@ -161,51 +181,27 @@
               setPointers = function() {
                 var newHighValue, newLowValue;
                 offset(ceilBub, pixelize(barWidth - width(ceilBub)));
-                newLowValue = percentValue(scope[low]);
+                newLowValue = percentValue(scope.ngModelLow);
                 offset(minPtr, percentToOffset(newLowValue));
                 offset(lowBub, pixelize(offsetLeft(minPtr) - (halfWidth(lowBub)) + handleHalfWidth));
-                if (range) {
-                  newHighValue = percentValue(scope[high]);
-                  offset(maxPtr, percentToOffset(newHighValue));
-                  offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + handleHalfWidth));
-                  offset(selBar, pixelize(offsetLeft(minPtr) + handleHalfWidth));
-                  return selBar.css({
-                    width: percentToOffset(newHighValue - newLowValue)
-                  });
-                }
-              };
-              adjustBubbles = function() {
-                var bubToAdjust;
-                fitToBar(lowBub);
-                bubToAdjust = highBub;
-                if (range) {
-                  fitToBar(highBub);
-                }
-                if (gap(flrBub, lowBub) < 5) {
-                  hide(flrBub);
-                } else {
-                  if (range) {
-                    if (gap(flrBub, bubToAdjust) < 5) {
-                      hide(flrBub);
-                    } else {
-                      show(flrBub);
-                    }
-                  } else {
-                    show(flrBub);
-                  }
-                }
-                if (gap(lowBub, ceilBub) < 5) {
-                  return hide(ceilBub);
-                } else {
-                  if (range) {
-                    if (gap(bubToAdjust, ceilBub) < 5) {
-                      return hide(ceilBub);
-                    } else {
-                      return show(ceilBub);
-                    }
-                  } else {
-                    return show(ceilBub);
-                  }
+                offset(selection, pixelize(offsetLeft(minPtr) + handleHalfWidth));
+                switch (true) {
+                  case range:
+                    newHighValue = percentValue(scope.ngModelHigh);
+                    offset(maxPtr, percentToOffset(newHighValue));
+                    offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + handleHalfWidth));
+                    return selection.css({
+                      width: percentToOffset(newHighValue - newLowValue)
+                    });
+                  case attributes.highlight === 'right':
+                    return selection.css({
+                      width: percentToOffset(110 - newLowValue)
+                    });
+                  case attributes.highlight === 'left':
+                    selection.css({
+                      width: percentToOffset(newLowValue)
+                    });
+                    return offset(selection, 0);
                 }
               };
               bindToInputEvents = function(handle, bubble, ref, events) {
@@ -227,22 +223,28 @@
                   newValue = minValue + (valueRange * newPercent / 100.0);
                   if (range) {
                     switch (currentRef) {
-                      case low:
-                        if (newValue > scope[high]) {
-                          currentRef = high;
+                      case 'ngModelLow':
+                        if (newValue > scope.ngModelHigh) {
+                          currentRef = 'ngModelHigh';
                           minPtr.removeClass('active');
                           lowBub.removeClass('active');
                           maxPtr.addClass('active');
                           highBub.addClass('active');
+                          setPointers();
+                        } else if (scope.buffer > 0) {
+                          newValue = Math.min(newValue, scope.ngModelHigh - scope.buffer);
                         }
                         break;
-                      case high:
-                        if (newValue < scope[low]) {
-                          currentRef = low;
+                      case 'ngModelHigh':
+                        if (newValue < scope.ngModelLow) {
+                          currentRef = 'ngModelLow';
                           maxPtr.removeClass('active');
                           highBub.removeClass('active');
                           minPtr.addClass('active');
                           lowBub.addClass('active');
+                          setPointers();
+                        } else if (scope.buffer > 0) {
+                          newValue = Math.max(newValue, parseInt(scope.ngModelLow) + parseInt(scope.buffer));
                         }
                     }
                   }
@@ -266,8 +268,8 @@
                 var bind, inputMethod, _j, _len1, _ref2, _results;
                 boundToInputs = true;
                 bind = function(method) {
-                  bindToInputEvents(minPtr, lowBub, low, inputEvents[method]);
-                  return bindToInputEvents(maxPtr, highBub, high, inputEvents[method]);
+                  bindToInputEvents(minPtr, lowBub, 'ngModelLow', inputEvents[method]);
+                  return bindToInputEvents(maxPtr, highBub, 'ngModelHigh', inputEvents[method]);
                 };
                 _ref2 = ['touch', 'mouse'];
                 _results = [];
@@ -277,16 +279,15 @@
                 }
                 return _results;
               };
-              setPointers();
-              adjustBubbles();
               if (!boundToInputs) {
-                return setBindings();
+                setBindings();
               }
+              return setPointers();
             };
             $timeout(updateDOM);
             for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
               w = watchables[_j];
-              scope.$watch(w, updateDOM);
+              scope.$watch(w, updateDOM, true);
             }
             return window.addEventListener("resize", updateDOM);
           }
