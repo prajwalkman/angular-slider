@@ -23,7 +23,7 @@ roundStep     = (value, precision, step, floor = 0) ->
     else value - remainder
   decimals = Math.pow 10, precision
   roundedValue = steppedValue * decimals / decimals
-  parseFloat(roundedValue.toFixed precision)
+  roundedValue.toFixed precision
 inputEvents =
   mouse:
     start: 'mousedown'
@@ -89,7 +89,10 @@ sliderDirective = ($timeout) ->
         scope.floor ?= 0
         scope.precision ?= 0
         scope.ceiling ?= scope.values.length - 1 if scope.values?.length
-        scope.ngModelLow ?= scope.ngModel unless range
+
+        unless range
+          scope.ngModelLow ?= scope.ngModel
+          scope.ngModel = scope.ngModelLow
 
         for value in watchables
           scope[value] = roundStep(parseFloat(scope[value]),

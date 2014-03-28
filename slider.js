@@ -60,7 +60,7 @@
     steppedValue = remainder > (step / 2) ? value + step - remainder : value - remainder;
     decimals = Math.pow(10, precision);
     roundedValue = steppedValue * decimals / decimals;
-    return parseFloat(roundedValue.toFixed(precision));
+    return roundedValue.toFixed(precision);
   };
 
   inputEvents = {
@@ -147,6 +147,7 @@
                 if (scope.ngModelLow == null) {
                   scope.ngModelLow = scope.ngModel;
                 }
+                scope.ngModel = scope.ngModelLow;
               }
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
