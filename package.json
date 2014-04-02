@@ -1,0 +1,20 @@
+{
+  "name": "angular-slider",
+  "version": "0.2.3",
+  "description": "Slider directive implementation for AngularJS, without jQuery dependencies.",
+  "main": "slider.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PopSugar/angular-slider.git"
+  },
+  "keywords": [
+    "angular",
+    "slider"
+  ],
+  "devDependencies": {
+    "coffee-script": "latest"
+  },
+  "author": "POPSUGAR",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
