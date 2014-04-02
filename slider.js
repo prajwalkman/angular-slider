@@ -94,7 +94,7 @@
       },
       template: '<div class="bar"><div class="selection"></div></div>\n<div class="handle low"></div><div class="handle high"></div>\n<div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>\n<div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>\n<div class="bubble value low">{{ values.length ? ( values[ngModelLow] || ngModelLow ) : ngModelLow }}</div>\n<div class="bubble value high">{{ values.length ? ( values[ngModelHigh] || ngModelHigh ) : ngModelHigh }}</div>',
       compile: function(element, attributes) {
-        var bar, ceilBub, e, flrBub, highBub, lowBub, maxPtr, minPtr, range, selection, watchables, _i, _len, _ref, _ref1;
+        var bar, ceilBub, e, flrBub, high, highBub, low, lowBub, maxPtr, minPtr, range, selection, watchables, _i, _len, _ref, _ref1;
         range = (attributes.ngModel == null) && (attributes.ngModelLow != null) && (attributes.ngModelHigh != null);
         _ref = (function() {
           var _i, _len, _ref, _results;
@@ -117,9 +117,11 @@
             selection.remove();
           }
         }
-        watchables = ['floor', 'ceiling', 'values', 'ngModelLow'];
+        low = range ? 'ngModelLow' : 'ngModel';
+        high = 'ngModelHigh';
+        watchables = ['floor', 'ceiling', 'values', low];
         if (range) {
-          watchables.push('ngModelHigh');
+          watchables.push(high);
         }
         return {
           post: function(scope, element, attributes) {
@@ -138,16 +140,13 @@
               if (scope.precision == null) {
                 scope.precision = 0;
               }
+              if (!range) {
+                scope.ngModelLow = scope.ngModel;
+              }
               if ((_ref2 = scope.values) != null ? _ref2.length : void 0) {
                 if (scope.ceiling == null) {
                   scope.ceiling = scope.values.length - 1;
                 }
-              }
-              if (!range) {
-                if (scope.ngModelLow == null) {
-                  scope.ngModelLow = scope.ngModel;
-                }
-                scope.ngModel = scope.ngModelLow;
               }
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
@@ -182,13 +181,13 @@
               setPointers = function() {
                 var newHighValue, newLowValue;
                 offset(ceilBub, pixelize(barWidth - width(ceilBub)));
-                newLowValue = percentValue(scope.ngModelLow);
+                newLowValue = percentValue(scope[low]);
                 offset(minPtr, percentToOffset(newLowValue));
                 offset(lowBub, pixelize(offsetLeft(minPtr) - (halfWidth(lowBub)) + handleHalfWidth));
                 offset(selection, pixelize(offsetLeft(minPtr) + handleHalfWidth));
                 switch (true) {
                   case range:
-                    newHighValue = percentValue(scope.ngModelHigh);
+                    newHighValue = percentValue(scope[high]);
                     offset(maxPtr, percentToOffset(newHighValue));
                     offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + handleHalfWidth));
                     return selection.css({
@@ -224,28 +223,28 @@
                   newValue = minValue + (valueRange * newPercent / 100.0);
                   if (range) {
                     switch (currentRef) {
-                      case 'ngModelLow':
-                        if (newValue > scope.ngModelHigh) {
-                          currentRef = 'ngModelHigh';
+                      case low:
+                        if (newValue > scope[high]) {
+                          currentRef = high;
                           minPtr.removeClass('active');
                           lowBub.removeClass('active');
                           maxPtr.addClass('active');
                           highBub.addClass('active');
                           setPointers();
                         } else if (scope.buffer > 0) {
-                          newValue = Math.min(newValue, scope.ngModelHigh - scope.buffer);
+                          newValue = Math.min(newValue, scope[high] - scope.buffer);
                         }
                         break;
-                      case 'ngModelHigh':
-                        if (newValue < scope.ngModelLow) {
-                          currentRef = 'ngModelLow';
+                      case high:
+                        if (newValue < scope[low]) {
+                          currentRef = low;
                           maxPtr.removeClass('active');
                           highBub.removeClass('active');
                           minPtr.addClass('active');
                           lowBub.addClass('active');
                           setPointers();
                         } else if (scope.buffer > 0) {
-                          newValue = Math.max(newValue, parseInt(scope.ngModelLow) + parseInt(scope.buffer));
+                          newValue = Math.max(newValue, parseInt(scope[low]) + parseInt(scope.buffer));
                         }
                     }
                   }
@@ -269,8 +268,8 @@
                 var bind, inputMethod, _j, _len1, _ref2, _results;
                 boundToInputs = true;
                 bind = function(method) {
-                  bindToInputEvents(minPtr, lowBub, 'ngModelLow', inputEvents[method]);
-                  return bindToInputEvents(maxPtr, highBub, 'ngModelHigh', inputEvents[method]);
+                  bindToInputEvents(minPtr, lowBub, low, inputEvents[method]);
+                  return bindToInputEvents(maxPtr, highBub, high, inputEvents[method]);
                 };
                 _ref2 = ['touch', 'mouse'];
                 _results = [];

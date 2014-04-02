@@ -73,9 +73,12 @@ sliderDirective = ($timeout) ->
       element.remove() for element in [maxPtr, highBub]
       selection.remove() unless attributes.highlight
 
+    low = if range then 'ngModelLow' else 'ngModel'
+    high = 'ngModelHigh'
+
     # Scope values to watch for changes
-    watchables = ['floor', 'ceiling', 'values', 'ngModelLow']
-    watchables.push 'ngModelHigh' if range
+    watchables = ['floor', 'ceiling', 'values', low]
+    watchables.push high if range
 
     post: (scope, element, attributes) ->
 
@@ -88,11 +91,8 @@ sliderDirective = ($timeout) ->
         scope.step ?= 1
         scope.floor ?= 0
         scope.precision ?= 0
+        scope.ngModelLow = scope.ngModel unless range
         scope.ceiling ?= scope.values.length - 1 if scope.values?.length
-
-        unless range
-          scope.ngModelLow ?= scope.ngModel
-          scope.ngModel = scope.ngModelLow
 
         for value in watchables
           scope[value] = roundStep(parseFloat(scope[value]),
@@ -125,14 +125,14 @@ sliderDirective = ($timeout) ->
 
         setPointers = ->
           offset ceilBub, pixelize(barWidth - width(ceilBub))
-          newLowValue = percentValue scope.ngModelLow
+          newLowValue = percentValue scope[low]
           offset minPtr, percentToOffset newLowValue
           offset lowBub, pixelize(offsetLeft(minPtr) - (halfWidth lowBub) + handleHalfWidth)
           offset selection, pixelize(offsetLeft(minPtr) + handleHalfWidth)
 
           switch true
             when range
-              newHighValue = percentValue scope.ngModelHigh
+              newHighValue = percentValue scope[high]
               offset maxPtr, percentToOffset newHighValue
               offset highBub, pixelize(offsetLeft(maxPtr) - (halfWidth highBub) + handleHalfWidth)
               selection.css width: percentToOffset newHighValue - newLowValue
@@ -158,9 +158,9 @@ sliderDirective = ($timeout) ->
             newValue = minValue + (valueRange * newPercent / 100.0)
             if range
               switch currentRef
-                when 'ngModelLow'
-                  if newValue > scope.ngModelHigh
-                    currentRef = 'ngModelHigh'
+                when low
+                  if newValue > scope[high]
+                    currentRef = high
                     minPtr.removeClass 'active'
                     lowBub.removeClass 'active'
                     maxPtr.addClass 'active'
@@ -168,10 +168,10 @@ sliderDirective = ($timeout) ->
                     setPointers()
                   else if scope.buffer > 0
                     newValue = Math.min newValue,
-                      scope.ngModelHigh - scope.buffer
-                when 'ngModelHigh'
-                  if newValue < scope.ngModelLow
-                    currentRef = 'ngModelLow'
+                      scope[high] - scope.buffer
+                when high
+                  if newValue < scope[low]
+                    currentRef = low
                     maxPtr.removeClass 'active'
                     highBub.removeClass 'active'
                     minPtr.addClass 'active'
@@ -179,7 +179,7 @@ sliderDirective = ($timeout) ->
                     setPointers()
                   else if scope.buffer > 0
                     newValue = Math.max newValue,
-                      parseInt(scope.ngModelLow) + parseInt(scope.buffer)
+                      parseInt(scope[low]) + parseInt(scope.buffer)
             newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
             scope[currentRef] = newValue
             scope.$apply()
@@ -197,8 +197,8 @@ sliderDirective = ($timeout) ->
         setBindings = ->
           boundToInputs = true
           bind = (method) ->
-            bindToInputEvents minPtr, lowBub, 'ngModelLow', inputEvents[method]
-            bindToInputEvents maxPtr, highBub, 'ngModelHigh', inputEvents[method]
+            bindToInputEvents minPtr, lowBub, low, inputEvents[method]
+            bindToInputEvents maxPtr, highBub, high, inputEvents[method]
           bind(inputMethod) for inputMethod in ['touch', 'mouse']
 
         setBindings() unless boundToInputs
