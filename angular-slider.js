@@ -48,10 +48,6 @@
     return offsetLeft(element2) - offsetLeft(element1) - width(element1);
   };
 
-  bindHtml = function(element, html) {
-    return element.attr('ng-bind-html-unsafe', html);
-  };
-
   roundStep = function(value, precision, step, floor) {
     var decimals, remainder, roundedValue, steppedValue;
 
@@ -94,14 +90,11 @@
         ngModelHigh: '=?',
         translate: '&'
       },
-      template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>',
-      compile: function(element, attributes) {
+      template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class=""></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>',
+      link: function(scope, element, attributes) {
         var ceilBub, cmbBub, e, flrBub, fullBar, highBub, lowBub, maxPtr, minPtr, range, refHigh, refLow, selBar, selBub, watchables, _i, _len, _ref, _ref1;
-
-        if (attributes.translate) {
-          attributes.$set('translate', "" + attributes.translate + "(value)");
-        }
-        range = (attributes.ngModel == null) && ((attributes.ngModelLow != null) && (attributes.ngModelHigh != null));
+        refLow = range ? 'ngModelLow' : 'ngModel';
+          
         _ref = (function() {
           var _i, _len, _ref, _results;
 
@@ -113,62 +106,49 @@
           }
           return _results;
         })(), fullBar = _ref[0], selBar = _ref[1], minPtr = _ref[2], maxPtr = _ref[3], selBub = _ref[4], flrBub = _ref[5], ceilBub = _ref[6], lowBub = _ref[7], highBub = _ref[8], cmbBub = _ref[9];
-        refLow = range ? 'ngModelLow' : 'ngModel';
-        refHigh = 'ngModelHigh';
-        bindHtml(selBub, "'Range: ' + translate({value: diff})");
-        bindHtml(lowBub, "translate({value: " + refLow + "})");
-        bindHtml(highBub, "translate({value: " + refHigh + "})");
-        bindHtml(cmbBub, "translate({value: " + refLow + "}) + ' - ' + translate({value: " + refHigh + "})");
-        if (!range) {
-          _ref1 = [selBar, maxPtr, selBub, highBub, cmbBub];
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            element = _ref1[_i];
-            element.remove();
-          }
-        }
+          
         watchables = [refLow, 'floor', 'ceiling'];
-        if (range) {
-          watchables.push(refHigh);
-        }
-        return {
-          post: function(scope, element, attributes) {
-            var barWidth, boundToInputs, dimensions, maxOffset, maxValue, minOffset, minValue, ngDocument, offsetRange, pointerHalfWidth, updateDOM, valueRange, w, _j, _len1;
-
-            boundToInputs = false;
-            ngDocument = angularize(document);
-            if (!attributes.translate) {
-              scope.translate = function(value) {
-                return value.value;
-              };
-            }
-            pointerHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = void 0;
-            dimensions = function() {
-              var value, _j, _len1, _ref2, _ref3;
-
-              if ((_ref2 = scope.precision) == null) {
-                scope.precision = 0;
-              }
-              if ((_ref3 = scope.step) == null) {
-                scope.step = 1;
-              }
-              for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
-                value = watchables[_j];
-                scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
-              }
-              scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
-              pointerHalfWidth = halfWidth(minPtr);
-              barWidth = width(fullBar);
-              minOffset = 0;
-              maxOffset = barWidth - width(minPtr);
-              minValue = parseFloat(attributes.floor);
-              maxValue = parseFloat(attributes.ceiling);
-              valueRange = maxValue - minValue;
-              return offsetRange = maxOffset - minOffset;
+        boundToInputs = false;
+        ngDocument = angularize(document);
+        if(!attributes.translate)
+        {
+            scope.translate = function(value) {
+              return value.value;
             };
+        }
+        pointerHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = undefined;
+        dimensions =function()
+        {
+            if (scope.precision == null) {
+              scope.precision = 0;
+            }
+            if (scope.step == null) {
+              scope.step = 1;
+            }
+            var value, _i, _len;
+
+            for (_i = 0, _len = watchables.length; _i < _len; _i++) {
+              value = watchables[_i];
+              scope[value] = parseInt(roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor)), 10);
+            }
+            scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
+            pointerHalfWidth = halfWidth(minPtr);
+            barWidth = width(fullBar);
+            minOffset = 0;
+            maxOffset = barWidth - width(minPtr);
+            minValue = parseFloat(attributes.floor);
+            maxValue = parseFloat(attributes.ceiling);
+            valueRange = maxValue - minValue;
+            offsetRange = maxOffset - minOffset;
+            
+        }
+        
             updateDOM = function() {
               var adjustBubbles, bindToInputEvents, fitToBar, percentOffset, percentToOffset, percentValue, setBindings, setPointers;
+                 dimensions();
 
-              dimensions();
+                if(offsetRange==0)
+                 offsetRange=1042;
               percentOffset = function(offset) {
                 return ((offset - minOffset) / offsetRange) * 100;
               };
@@ -185,30 +165,28 @@
                 var newHighValue, newLowValue;
 
                 offset(ceilBub, pixelize(barWidth - width(ceilBub)));
+                
                 newLowValue = percentValue(scope[refLow]);
                 offset(minPtr, percentToOffset(newLowValue));
                 offset(lowBub, pixelize(offsetLeft(minPtr) - (halfWidth(lowBub)) + pointerHalfWidth));
-                if (range) {
-                  newHighValue = percentValue(scope[refHigh]);
-                  offset(maxPtr, percentToOffset(newHighValue));
-                  offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + pointerHalfWidth));
-                  offset(selBar, pixelize(offsetLeft(minPtr) + pointerHalfWidth));
-                  selBar.css({
+                newHighValue = percentValue(scope.ngModelHigh);
+                offset(maxPtr, percentToOffset(newHighValue));
+                offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + pointerHalfWidth));
+                offset(selBar, pixelize(offsetLeft(minPtr) + pointerHalfWidth));
+                selBar.css({
                     width: percentToOffset(newHighValue - newLowValue)
-                  });
+                });
                   offset(selBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(selBub)));
                   return offset(cmbBub, pixelize(offsetLeft(selBar) + halfWidth(selBar) - halfWidth(cmbBub)));
-                }
               };
               adjustBubbles = function() {
                 var bubToAdjust;
 
                 fitToBar(lowBub);
                 bubToAdjust = highBub;
-                if (range) {
-                  fitToBar(highBub);
-                  fitToBar(selBub);
-                  if (gap(lowBub, highBub) < 10) {
+                fitToBar(highBub);
+                fitToBar(selBub);
+                if (gap(lowBub, highBub) < 10) {
                     hide(lowBub);
                     hide(highBub);
                     fitToBar(cmbBub);
@@ -220,33 +198,24 @@
                     hide(cmbBub);
                     bubToAdjust = highBub;
                   }
-                }
                 if (gap(flrBub, lowBub) < 5) {
                   hide(flrBub);
                 } else {
-                  if (range) {
                     if (gap(flrBub, bubToAdjust) < 5) {
                       hide(flrBub);
                     } else {
                       show(flrBub);
                     }
-                  } else {
-                    show(flrBub);
                   }
-                }
                 if (gap(lowBub, ceilBub) < 5) {
                   return hide(ceilBub);
                 } else {
-                  if (range) {
                     if (gap(bubToAdjust, ceilBub) < 5) {
                       return hide(ceilBub);
                     } else {
                       return show(ceilBub);
                     }
-                  } else {
-                    return show(ceilBub);
-                  }
-                }
+                  } 
               };
               bindToInputEvents = function(pointer, ref, events) {
                 var onEnd, onMove, onStart;
@@ -280,7 +249,7 @@
                     }
                   }
                   newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
-                  scope[ref] = newValue;
+                  scope[ref] = parseInt(newValue, 10);
                   return scope.$apply();
                 };
                 onStart = function(event) {
@@ -299,15 +268,15 @@
                 boundToInputs = true;
                 bind = function(method) {
                   bindToInputEvents(minPtr, refLow, inputEvents[method]);
-                  return bindToInputEvents(maxPtr, refHigh, inputEvents[method]);
+                  return bindToInputEvents(maxPtr, 'ngModelHigh', inputEvents[method]);
                 };
-                _ref2 = ['touch', 'mouse'];
-                _results = [];
-                for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-                  inputMethod = _ref2[_j];
-                  _results.push(bind(inputMethod));
+                 var inputMethod, _i, _len, _ref;
+
+                _ref = ['touch', 'mouse'];
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                  inputMethod = _ref[_i];
+                  bind(inputMethod);
                 }
-                return _results;
               };
               setPointers();
               adjustBubbles();
@@ -323,9 +292,7 @@
             return window.addEventListener("resize", updateDOM);
           }
         };
-      }
-    };
-  };
+      };
 
   qualifiedDirectiveDefinition = ['$timeout', sliderDirective];
 
