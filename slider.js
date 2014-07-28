@@ -88,11 +88,12 @@
         highlight: '@',
         precision: '@',
         buffer: '@',
+        dragstop: '@',
         ngModel: '=?',
         ngModelLow: '=?',
         ngModelHigh: '=?'
       },
-      template: '<div class="bar"><div class="selection"></div></div>\n<div class="handle low"></div><div class="handle high"></div>\n<div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>\n<div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>\n<div class="bubble value low">{{ values.length ? ( values[ngModelLow] || ngModelLow ) : ngModelLow }}</div>\n<div class="bubble value high">{{ values.length ? ( values[ngModelHigh] || ngModelHigh ) : ngModelHigh }}</div>',
+      template: '<div class="bar"><div class="selection"></div></div>\n<div class="handle low"></div><div class="handle high"></div>\n<div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>\n<div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>\n<div class="bubble value low">{{ values.length ? ( values[local.ngModelLow || local.ngModel] || local.ngModelLow || local.ngModel ) : local.ngModelLow || local.ngModel}}</div>\n<div class="bubble value high">{{ values.length ? ( values[local.ngModelHigh] || local.ngModelHigh ) : local.ngModelHigh }}</div>',
       compile: function(element, attributes) {
         var bar, ceilBub, e, flrBub, high, highBub, low, lowBub, maxPtr, minPtr, range, selection, watchables, _i, _len, _ref, _ref1;
         range = (attributes.ngModel == null) && (attributes.ngModelLow != null) && (attributes.ngModelHigh != null);
@@ -126,6 +127,9 @@
         return {
           post: function(scope, element, attributes) {
             var barWidth, boundToInputs, dimensions, handleHalfWidth, maxOffset, maxValue, minOffset, minValue, ngDocument, offsetRange, updateDOM, valueRange, w, _j, _len1;
+            scope.local = {};
+            scope.local[low] = scope[low];
+            scope.local[high] = scope[high];
             boundToInputs = false;
             ngDocument = angularize(document);
             handleHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = void 0;
@@ -148,6 +152,8 @@
                   scope.ceiling = scope.values.length - 1;
                 }
               }
+              scope.local[low] = scope[low];
+              scope.local[high] = scope[high];
               for (_j = 0, _len1 = watchables.length; _j < _len1; _j++) {
                 value = watchables[_j];
                 if (typeof value === 'number') {
@@ -181,13 +187,13 @@
               setPointers = function() {
                 var newHighValue, newLowValue;
                 offset(ceilBub, pixelize(barWidth - width(ceilBub)));
-                newLowValue = percentValue(scope[low]);
+                newLowValue = percentValue(scope.local[low]);
                 offset(minPtr, percentToOffset(newLowValue));
                 offset(lowBub, pixelize(offsetLeft(minPtr) - (halfWidth(lowBub)) + handleHalfWidth));
                 offset(selection, pixelize(offsetLeft(minPtr) + handleHalfWidth));
                 switch (true) {
                   case range:
-                    newHighValue = percentValue(scope[high]);
+                    newHighValue = percentValue(scope.local[high]);
                     offset(maxPtr, percentToOffset(newHighValue));
                     offset(highBub, pixelize(offsetLeft(maxPtr) - (halfWidth(highBub)) + handleHalfWidth));
                     return selection.css({
@@ -212,6 +218,10 @@
                   handle.removeClass('active');
                   ngDocument.unbind(events.move);
                   ngDocument.unbind(events.end);
+                  if (scope.dragstop) {
+                    scope[high] = scope.local[high];
+                    scope[low] = scope.local[low];
+                  }
                   return currentRef = ref;
                 };
                 onMove = function(event) {
@@ -224,7 +234,7 @@
                   if (range) {
                     switch (currentRef) {
                       case low:
-                        if (newValue > scope[high]) {
+                        if (newValue > scope.local[high]) {
                           currentRef = high;
                           minPtr.removeClass('active');
                           lowBub.removeClass('active');
@@ -232,11 +242,11 @@
                           highBub.addClass('active');
                           setPointers();
                         } else if (scope.buffer > 0) {
-                          newValue = Math.min(newValue, scope[high] - scope.buffer);
+                          newValue = Math.min(newValue, scope.local[high] - scope.buffer);
                         }
                         break;
                       case high:
-                        if (newValue < scope[low]) {
+                        if (newValue < scope.local[low]) {
                           currentRef = low;
                           maxPtr.removeClass('active');
                           highBub.removeClass('active');
@@ -244,12 +254,16 @@
                           lowBub.addClass('active');
                           setPointers();
                         } else if (scope.buffer > 0) {
-                          newValue = Math.max(newValue, parseInt(scope[low]) + parseInt(scope.buffer));
+                          newValue = Math.max(newValue, parseInt(scope.local[low]) + parseInt(scope.buffer));
                         }
                     }
                   }
                   newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor));
-                  scope[currentRef] = newValue;
+                  scope.local[currentRef] = newValue;
+                  if (!scope.dragstop) {
+                    scope[currentRef] = newValue;
+                  }
+                  setPointers();
                   return scope.$apply();
                 };
                 onStart = function(event) {
