@@ -4,6 +4,7 @@ DEPRECATED
 I am unable to maintain or update this repository any more. If you know more well maintained forks, let me know so I can link it here.
 
 PopSugar: https://github.com/PopSugar/angular-slider (updated to work in current Angular version)
+
 Venturocket: http://github.com/venturocket/angular-slider (highly modified)
 
 
