@@ -46,6 +46,7 @@ sliderDirective = ($timeout) ->
     highlight:    '@'
     precision:    '@'
     buffer:       '@'
+    dragstop:     '@'
     ngModel:      '=?'
     ngModelLow:   '=?'
     ngModelHigh:  '=?'
@@ -54,8 +55,8 @@ sliderDirective = ($timeout) ->
     <div class="handle low"></div><div class="handle high"></div>
     <div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>
     <div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>
-    <div class="bubble value low">{{ values.length ? ( values[ngModelLow] || ngModelLow ) : ngModelLow }}</div>
-    <div class="bubble value high">{{ values.length ? ( values[ngModelHigh] || ngModelHigh ) : ngModelHigh }}</div>'''
+    <div class="bubble value low">{{ values.length ? ( values[local.ngModelLow || local.ngModel] || local.ngModelLow || local.ngModel ) : local.ngModelLow || local.ngModel}}</div>
+    <div class="bubble value high">{{ values.length ? ( values[local.ngModelHigh] || local.ngModelHigh ) : local.ngModelHigh }}</div>'''
   compile: (element, attributes) ->
 
     # Check if it is a range slider
@@ -80,6 +81,9 @@ sliderDirective = ($timeout) ->
     watchables.push high if range
 
     post: (scope, element, attributes) ->
+      scope.local = {}
+      scope.local[low] = scope[low]
+      scope.local[high] = scope[high]
 
       boundToInputs = false
       ngDocument = angularize document
@@ -92,6 +96,9 @@ sliderDirective = ($timeout) ->
         scope.precision ?= 0
         scope.ngModelLow = scope.ngModel unless range
         scope.ceiling ?= scope.values.length - 1 if scope.values?.length
+
+        scope.local[low] = scope[low]
+        scope.local[high] = scope[high]
 
         for value in watchables
           scope[value] = roundStep(parseFloat(scope[value]),
@@ -124,14 +131,14 @@ sliderDirective = ($timeout) ->
 
         setPointers = ->
           offset ceilBub, pixelize(barWidth - width(ceilBub))
-          newLowValue = percentValue scope[low]
+          newLowValue = percentValue scope.local[low]
           offset minPtr, percentToOffset newLowValue
           offset lowBub, pixelize(offsetLeft(minPtr) - (halfWidth lowBub) + handleHalfWidth)
           offset selection, pixelize(offsetLeft(minPtr) + handleHalfWidth)
 
           switch true
             when range
-              newHighValue = percentValue scope[high]
+              newHighValue = percentValue scope.local[high]
               offset maxPtr, percentToOffset newHighValue
               offset highBub, pixelize(offsetLeft(maxPtr) - (halfWidth highBub) + handleHalfWidth)
               selection.css width: percentToOffset newHighValue - newLowValue
@@ -148,6 +155,9 @@ sliderDirective = ($timeout) ->
             handle.removeClass 'active'
             ngDocument.unbind events.move
             ngDocument.unbind events.end
+            if scope.dragstop
+              scope[high] = scope.local[high]
+              scope[low] = scope.local[low]
             currentRef = ref
           onMove = (event) ->
             eventX = event.clientX || event.touches[0].clientX
@@ -158,7 +168,7 @@ sliderDirective = ($timeout) ->
             if range
               switch currentRef
                 when low
-                  if newValue > scope[high]
+                  if newValue > scope.local[high]
                     currentRef = high
                     minPtr.removeClass 'active'
                     lowBub.removeClass 'active'
@@ -167,9 +177,9 @@ sliderDirective = ($timeout) ->
                     setPointers()
                   else if scope.buffer > 0
                     newValue = Math.min newValue,
-                      scope[high] - scope.buffer
+                      scope.local[high] - scope.buffer
                 when high
-                  if newValue < scope[low]
+                  if newValue < scope.local[low]
                     currentRef = low
                     maxPtr.removeClass 'active'
                     highBub.removeClass 'active'
@@ -178,9 +188,13 @@ sliderDirective = ($timeout) ->
                     setPointers()
                   else if scope.buffer > 0
                     newValue = Math.max newValue,
-                      parseInt(scope[low]) + parseInt(scope.buffer)
+                      parseInt(scope.local[low]) + parseInt(scope.buffer)
             newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
-            scope[currentRef] = newValue
+            scope.local[currentRef] = newValue
+            unless scope.dragstop
+              scope[currentRef] = newValue
+            setPointers()
+
             scope.$apply()
           onStart = (event) ->
             dimensions()
