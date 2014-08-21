@@ -159,6 +159,7 @@ sliderDirective = ($timeout) ->
               scope[high] = scope.local[high]
               scope[low] = scope.local[low]
             currentRef = ref
+            scope.$apply()
           onMove = (event) ->
             eventX = event.clientX || event.touches[0].clientX
             newOffset = eventX - element[0].getBoundingClientRect().left - handleHalfWidth
