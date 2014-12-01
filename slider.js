@@ -60,7 +60,7 @@
     steppedValue = remainder > (step / 2) ? value + step - remainder : value - remainder;
     decimals = Math.pow(10, precision);
     roundedValue = steppedValue * decimals / decimals;
-    return roundedValue.toFixed(precision);
+    return parseFloat(roundedValue.toFixed(precision));
   };
 
   inputEvents = {
@@ -83,7 +83,6 @@
         floor: '@',
         ceiling: '@',
         values: '=?',
-        range: '@',
         step: '@',
         highlight: '@',
         precision: '@',
@@ -149,7 +148,7 @@
               }
               if ((_ref2 = scope.values) != null ? _ref2.length : void 0) {
                 if (scope.ceiling == null) {
-                  scope.ceiling = scope.values.length - 1;
+                  scope.ceiling = scope.values[scope.values.length - 1];
                 }
               }
               scope.local[low] = scope[low];
@@ -222,7 +221,8 @@
                     scope[high] = scope.local[high];
                     scope[low] = scope.local[low];
                   }
-                  return currentRef = ref;
+                  currentRef = ref;
+                  return scope.$apply();
                 };
                 onMove = function(event) {
                   var eventX, newOffset, newPercent, newValue;
