@@ -95,7 +95,7 @@ sliderDirective = ($timeout) ->
         scope.floor ?= 0
         scope.precision ?= 0
         scope.ngModelLow = scope.ngModel unless range
-        scope.ceiling ?= scope.values[scope.values.length - 1] if scope.values?.length
+        scope.ceiling ?= scope.values.length - 1 if scope.values?.length
 
         scope.local[low] = scope[low]
         scope.local[high] = scope[high]

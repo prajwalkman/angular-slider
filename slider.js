@@ -133,7 +133,7 @@
             ngDocument = angularize(document);
             handleHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = void 0;
             dimensions = function() {
-              var value, _j, _len1, _ref2;
+              var value, _j, _len1, _ref2, _ref3;
               if (scope.step == null) {
                 scope.step = 1;
               }
@@ -148,7 +148,7 @@
               }
               if ((_ref2 = scope.values) != null ? _ref2.length : void 0) {
                 if (scope.ceiling == null) {
-                  scope.ceiling = scope.values[scope.values.length - 1];
+                  scope.ceiling = ((_ref3 = scope.values) != null ? _ref3.length : void 0) - 1;
                 }
               }
               scope.local[low] = scope[low];
