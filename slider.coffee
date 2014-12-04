@@ -62,17 +62,6 @@ sliderDirective = ($timeout) ->
     # Check if it is a range slider
     range = !attributes.ngModel? and attributes.ngModelLow? and attributes.ngModelHigh?
 
-    # Get references to template elements
-    [bar, minPtr, maxPtr,
-      flrBub, ceilBub, lowBub, highBub] = (angularize(e) for e in element.children())
-
-    selection = angularize bar.children()[0]
-
-    # Remove range specific elements if not a range slider
-    unless range
-      element.remove() for element in [maxPtr, highBub]
-      selection.remove() unless attributes.highlight
-
     low = if range then 'ngModelLow' else 'ngModel'
     high = 'ngModelHigh'
 
@@ -81,6 +70,15 @@ sliderDirective = ($timeout) ->
     watchables.push high if range
 
     post: (scope, element, attributes) ->
+    # Get references to template elements
+      [bar, minPtr, maxPtr, flrBub, ceilBub, lowBub, highBub] = (angularize(e) for e in element.children())
+      selection = angularize bar.children()[0]
+
+      # Remove range specific elements if not a range slider
+      unless range
+        element.remove() for element in [maxPtr, highBub]
+        selection.remove() unless attributes.highlight
+
       scope.local = {}
       scope.local[low] = scope[low]
       scope.local[high] = scope[high]
