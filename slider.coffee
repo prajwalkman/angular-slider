@@ -53,10 +53,10 @@ sliderDirective = ($timeout) ->
   template: '''
     <div class="bar"><div class="selection"></div></div>
     <div class="handle low"></div><div class="handle high"></div>
-    <div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>
-    <div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>
-    <div class="bubble value low">{{ values.length ? ( values[local.ngModelLow || local.ngModel] || local.ngModelLow || local.ngModel ) : local.ngModelLow || local.ngModel }}</div>
-    <div class="bubble value high">{{ values.length ? ( values[local.ngModelHigh] || local.ngModelHigh ) : local.ngModelHigh }}</div>'''
+    <div class="bubble limit low">{{ values.length ? values[floor || 0] : floor }}</div>
+    <div class="bubble limit high">{{ values.length ? values[ceiling || values.length - 1] : ceiling }}</div>
+    <div class="bubble value low">{{ values.length ? values[local.ngModelLow || local.ngModel || 0] : local.ngModelLow || local.ngModel || 0 }}</div>
+    <div class="bubble value high">{{ values.length ? values[local.ngModelHigh] : local.ngModelHigh }}</div>'''
   compile: (element, attributes) ->
 
     # Check if it is a range slider
@@ -123,9 +123,6 @@ sliderDirective = ($timeout) ->
         percentOffset = (offset) -> ((offset - minOffset) / offsetRange) * 100
         percentValue = (value) -> ((value - minValue) / valueRange) * 100
         percentToOffset = (percent) -> pixelize percent * offsetRange / 100
-
-        # Fit bubble to bar width
-        fitToBar = (element) -> offset element, pixelize(Math.min (Math.max 0, offsetLeft(element)), (barWidth - width(element)))
 
         setPointers = ->
           offset ceilBub, pixelize(barWidth - width(ceilBub))
