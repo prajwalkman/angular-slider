@@ -70,13 +70,13 @@ sliderDirective = ($timeout) ->
     watchables.push high if range
 
     post: (scope, element, attributes) ->
-    # Get references to template elements
+      # Get references to template elements
       [bar, minPtr, maxPtr, flrBub, ceilBub, lowBub, highBub] = (angularize(e) for e in element.children())
       selection = angularize bar.children()[0]
 
       # Remove range specific elements if not a range slider
       unless range
-        element.remove() for element in [maxPtr, highBub]
+        upper.remove() for upper in [maxPtr, highBub]
         selection.remove() unless attributes.highlight
 
       scope.local = {}

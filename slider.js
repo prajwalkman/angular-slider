@@ -104,7 +104,7 @@
         }
         return {
           post: function(scope, element, attributes) {
-            var bar, barWidth, boundToInputs, ceilBub, dimensions, e, flrBub, handleHalfWidth, highBub, lowBub, maxOffset, maxPtr, maxValue, minOffset, minPtr, minValue, ngDocument, offsetRange, selection, updateDOM, valueRange, w, _i, _j, _len, _len1, _ref, _ref1;
+            var bar, barWidth, boundToInputs, ceilBub, dimensions, e, flrBub, handleHalfWidth, highBub, lowBub, maxOffset, maxPtr, maxValue, minOffset, minPtr, minValue, ngDocument, offsetRange, selection, updateDOM, upper, valueRange, w, _i, _j, _len, _len1, _ref, _ref1;
             _ref = (function() {
               var _i, _len, _ref, _results;
               _ref = element.children();
@@ -119,8 +119,8 @@
             if (!range) {
               _ref1 = [maxPtr, highBub];
               for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                element = _ref1[_i];
-                element.remove();
+                upper = _ref1[_i];
+                upper.remove();
               }
               if (!attributes.highlight) {
                 selection.remove();
