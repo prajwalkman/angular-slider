@@ -55,7 +55,7 @@ sliderDirective = ($timeout) ->
     <div class="handle low"></div><div class="handle high"></div>
     <div class="bubble limit low">{{ values.length ? ( values[floor || 0] || floor ) : floor }}</div>
     <div class="bubble limit high">{{ values.length ? ( values[ceiling || values.length - 1] || ceiling ) : ceiling }}</div>
-    <div class="bubble value low">{{ values.length ? ( values[local.ngModelLow || local.ngModel] || local.ngModelLow || local.ngModel ) : local.ngModelLow || local.ngModel}}</div>
+    <div class="bubble value low">{{ values.length ? ( values[local.ngModelLow || local.ngModel] || local.ngModelLow || local.ngModel ) : local.ngModelLow || local.ngModel }}</div>
     <div class="bubble value high">{{ values.length ? ( values[local.ngModelHigh] || local.ngModelHigh ) : local.ngModelHigh }}</div>'''
   compile: (element, attributes) ->
 
