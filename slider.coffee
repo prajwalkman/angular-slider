@@ -14,6 +14,10 @@ halfWidth     = (element) -> element[0].offsetWidth / 2
 offsetLeft    = (element) -> element[0].offsetLeft
 width         = (element) -> element[0].offsetWidth
 gap           = (element1, element2) -> offsetLeft(element2) - offsetLeft(element1) - width(element1)
+contain       = (value) ->
+  if _.isInt value
+    Math.min Math.max(0, value), 100
+  else value
 roundStep     = (value, precision, step, floor = 0) ->
   step ?= 1 / Math.pow(10, precision)
   remainder = (value - floor) % step
@@ -120,9 +124,9 @@ sliderDirective = ($timeout) ->
         dimensions()
 
         # Translation functions
-        percentOffset = (offset) -> ((offset - minOffset) / offsetRange) * 100
-        percentValue = (value) -> ((value - minValue) / valueRange) * 100
-        percentToOffset = (percent) -> pixelize percent * offsetRange / 100
+        percentOffset = (offset) -> contain ((offset - minOffset) / offsetRange) * 100
+        percentValue = (value) -> contain ((value - minValue) / valueRange) * 100
+        percentToOffset = (percent) -> contain pixelize percent * offsetRange / 100
 
         setPointers = ->
           offset ceilBub, pixelize(barWidth - width(ceilBub))
