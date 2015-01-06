@@ -230,8 +230,8 @@
                   return scope.$apply();
                 };
                 onMove = function(event) {
-                  var eventX, newOffset, newPercent, newValue;
-                  eventX = event.clientX || event.touches[0].clientX;
+                  var eventX, newOffset, newPercent, newValue, _ref2, _ref3;
+                  eventX = event.clientX || ((_ref2 = event.touches) != null ? (_ref3 = _ref2[0]) != null ? _ref3.clientX : void 0 : void 0) || 0;
                   newOffset = eventX - element[0].getBoundingClientRect().left - handleHalfWidth;
                   newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset);
                   newPercent = percentOffset(newOffset);
