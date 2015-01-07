@@ -49,7 +49,7 @@
   };
 
   contain = function(value) {
-    if (_.isInt(value)) {
+    if (value % 1 === 0) {
       return Math.min(Math.max(0, value), 100);
     } else {
       return value;

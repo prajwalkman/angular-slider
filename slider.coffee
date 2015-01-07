@@ -4,7 +4,6 @@ MODULE_NAME = 'ui.slider'
 SLIDER_TAG  = 'slider'
 
 # HELPER FUNCTIONS
-
 angularize    = (element) -> angular.element element
 pixelize      = (position) -> "#{position}px"
 hide          = (element) -> element.css opacity: 0
@@ -13,11 +12,14 @@ offset        = (element, position) -> element.css left: position
 halfWidth     = (element) -> element[0].offsetWidth / 2
 offsetLeft    = (element) -> element[0].offsetLeft
 width         = (element) -> element[0].offsetWidth
-gap           = (element1, element2) -> offsetLeft(element2) - offsetLeft(element1) - width(element1)
+gap           = (element1, element2) ->
+  offsetLeft(element2) - offsetLeft(element1) - width(element1)
+
 contain       = (value) ->
-  if _.isInt value
+  if value % 1 is 0
     Math.min Math.max(0, value), 100
   else value
+
 roundStep     = (value, precision, step, floor = 0) ->
   step ?= 1 / Math.pow(10, precision)
   remainder = (value - floor) % step
@@ -28,6 +30,7 @@ roundStep     = (value, precision, step, floor = 0) ->
   decimals = Math.pow 10, precision
   roundedValue = steppedValue * decimals / decimals
   parseFloat roundedValue.toFixed precision
+
 inputEvents =
   mouse:
     start: 'mousedown'
