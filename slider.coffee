@@ -16,9 +16,8 @@ gap           = (element1, element2) ->
   offsetLeft(element2) - offsetLeft(element1) - width(element1)
 
 contain       = (value) ->
-  if value % 1 is 0
-    Math.min Math.max(0, value), 100
-  else value
+  return value if isNaN value
+  Math.min Math.max(0, value), 100
 
 roundStep     = (value, precision, step, floor = 0) ->
   step ?= 1 / Math.pow(10, precision)
@@ -31,7 +30,7 @@ roundStep     = (value, precision, step, floor = 0) ->
   roundedValue = steppedValue * decimals / decimals
   parseFloat roundedValue.toFixed precision
 
-inputEvents =
+events =
   mouse:
     start: 'mousedown'
     move:  'mousemove'
@@ -90,7 +89,7 @@ sliderDirective = ($timeout) ->
       scope.local[low] = scope[low]
       scope.local[high] = scope[high]
 
-      boundToInputs = false
+      bound = false
       ngDocument = angularize document
       handleHalfWidth = barWidth = minOffset = maxOffset = minValue = maxValue = valueRange = offsetRange = undefined
 
@@ -129,28 +128,28 @@ sliderDirective = ($timeout) ->
         # Translation functions
         percentOffset = (offset) -> contain ((offset - minOffset) / offsetRange) * 100
         percentValue = (value) -> contain ((value - minValue) / valueRange) * 100
-        percentToOffset = (percent) -> contain pixelize percent * offsetRange / 100
+        pixelsToOffset = (percent) -> pixelize percent * offsetRange / 100
 
         setPointers = ->
           offset ceilBub, pixelize(barWidth - width(ceilBub))
           newLowValue = percentValue scope.local[low]
-          offset minPtr, percentToOffset newLowValue
+          offset minPtr, pixelsToOffset newLowValue
           offset lowBub, pixelize(offsetLeft(minPtr) - (halfWidth lowBub) + handleHalfWidth)
           offset selection, pixelize(offsetLeft(minPtr) + handleHalfWidth)
 
           switch true
             when range
               newHighValue = percentValue scope.local[high]
-              offset maxPtr, percentToOffset newHighValue
+              offset maxPtr, pixelsToOffset newHighValue
               offset highBub, pixelize(offsetLeft(maxPtr) - (halfWidth highBub) + handleHalfWidth)
-              selection.css width: percentToOffset newHighValue - newLowValue
+              selection.css width: pixelsToOffset newHighValue - newLowValue
             when attributes.highlight is 'right'
-              selection.css width: percentToOffset 110 - newLowValue
+              selection.css width: pixelsToOffset 110 - newLowValue
             when attributes.highlight is 'left'
-              selection.css width: percentToOffset newLowValue
+              selection.css width: pixelsToOffset newLowValue
               offset selection, 0
 
-        bindToInputEvents = (handle, bubble, ref, events) ->
+        bind = (handle, bubble, ref, events) ->
           currentRef = ref
           onEnd = ->
             bubble.removeClass 'active'
@@ -163,7 +162,7 @@ sliderDirective = ($timeout) ->
             currentRef = ref
             scope.$apply()
           onMove = (event) ->
-            eventX = event.clientX || event.touches?[0]?.clientX || 0
+            eventX = event.clientX or event.touches?[0]?.clientX or 0
             newOffset = eventX - element[0].getBoundingClientRect().left - handleHalfWidth
             newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
             newPercent = percentOffset newOffset
@@ -211,18 +210,17 @@ sliderDirective = ($timeout) ->
           handle.bind events.start, onStart
 
         setBindings = ->
-          boundToInputs = true
-          bind = (method) ->
-            bindToInputEvents minPtr, lowBub, low, inputEvents[method]
-            bindToInputEvents maxPtr, highBub, high, inputEvents[method]
-          bind(inputMethod) for inputMethod in ['touch', 'mouse']
+          for method in ['touch', 'mouse']
+            bind minPtr, lowBub, low, events[method]
+            bind maxPtr, highBub, high, events[method]
+          bound = true
 
-        setBindings() unless boundToInputs
+        setBindings() unless bound
         setPointers()
 
       $timeout updateDOM
       scope.$watch w, updateDOM, true for w in watchables
-      window.addEventListener "resize", updateDOM
+      window.addEventListener 'resize', updateDOM
 
 qualifiedDirectiveDefinition = [
   '$timeout'
