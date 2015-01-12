@@ -162,7 +162,7 @@ sliderDirective = ($timeout) ->
             currentRef = ref
             scope.$apply()
           onMove = (event) ->
-            eventX = event.clientX or event.touches?[0]?.clientX or 0
+            eventX = event.clientX or event.touches?[0]?.clientX or event.originalEvent?.changedTouches?[0].clientX or 0
             newOffset = eventX - element[0].getBoundingClientRect().left - handleHalfWidth
             newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
             newPercent = percentOffset newOffset
