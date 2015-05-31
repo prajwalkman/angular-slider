@@ -7,6 +7,8 @@ PopSugar: https://github.com/PopSugar/angular-slider (updated to work in current
 
 Venturocket: http://github.com/venturocket/angular-slider (highly modified)
 
+RZajac: https://github.com/rzajac/angularjs-slider
+
 
 angular-slider
 ==============
