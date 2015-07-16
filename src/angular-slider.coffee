@@ -14,7 +14,7 @@ halfWidth       = (element) -> element[0].offsetWidth / 2
 offsetLeft      = (element) -> element[0].offsetLeft
 width           = (element) -> element[0].offsetWidth
 gap             = (element1, element2) -> offsetLeft(element2) - offsetLeft(element1) - width(element1)
-bindHtml        = (element, html) -> element.attr 'ng-bind-html-unsafe', html
+bindHtml        = (element, html) -> element.attr 'ng-bind-html', html
 roundStep       = (value, precision, step, floor = 0) ->
     step ?= 1 / Math.pow(10, precision)
     remainder = (value - floor) % step
@@ -48,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
+    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html="translate({value: floor})" class="bubble limit"></span><span ng-bind-html="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
@@ -60,7 +60,7 @@ sliderDirective = ($timeout) ->
         # Get references to template elements
         [fullBar, selBar, minPtr, maxPtr, selBub,
             flrBub, ceilBub, lowBub, highBub, cmbBub] = (angularize(e) for e in element.children())
-        
+
         # Shorthand references to the 2 model scopes
         refLow = if range then 'ngModelLow' else 'ngModel'
         refHigh = 'ngModelHigh'
@@ -93,7 +93,7 @@ sliderDirective = ($timeout) ->
                 scope.step ?= 1
                 scope[value] = roundStep(parseFloat(scope[value]), parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor)) for value in watchables
                 scope.diff = roundStep(scope[refHigh] - scope[refLow], parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
-                
+
                 # Commonly used measurements
                 pointerHalfWidth = halfWidth minPtr
                 barWidth = width fullBar
@@ -105,7 +105,7 @@ sliderDirective = ($timeout) ->
                 maxValue = parseFloat attributes.ceiling
 
                 valueRange = maxValue - minValue
-                offsetRange = maxOffset - minOffset                
+                offsetRange = maxOffset - minOffset
 
             updateDOM = ->
                 dimensions()
@@ -174,7 +174,7 @@ sliderDirective = ($timeout) ->
                         ngDocument.unbind events.move
                         ngDocument.unbind events.end
                     onMove = (event) ->
-                        eventX = event.clientX || event.touches[0].clientX
+                        eventX = event.clientX || (event.touches ? event.touches[0].clientX : 0)
                         newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth
                         newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
                         newPercent = percentOffset newOffset
@@ -187,7 +187,7 @@ sliderDirective = ($timeout) ->
                                     maxPtr.addClass 'active'
                             else
                                 if newValue < scope[refLow]
-                                    ref = refLow 
+                                    ref = refLow
                                     maxPtr.removeClass 'active'
                                     minPtr.addClass 'active'
                         newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
