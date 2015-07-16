@@ -1,0 +1,23 @@
+{
+  "name": "angular-slider",
+  "description": "Slider directive implementation for AngularJS, without jQuery dependencies.",
+  "main": "slider.js",
+  "keywords": [
+    "angular",
+    "slider",
+    "jquery",
+    "jquery-ui"
+  ],
+  "devDependencies": {
+    "compass": "latest",
+    "coffee-script": "latest"
+  },
+  "author": "PopSugar",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "ignore": ["*",
+    "!slider.scss",
+    "!slider.css",
+    "!slider.js"
+  ]
+}
