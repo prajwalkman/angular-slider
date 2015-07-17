@@ -48,7 +48,7 @@ sliderDirective = ($timeout) ->
         ngModelLow:  '=?'
         ngModelHigh: '=?'
         translate:   '&'
-    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer"></span><span class="pointer"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
+    template: '<span class="bar"></span><span class="bar selection"></span><span class="pointer low"></span><span class="pointer high"></span><span class="bubble selection"></span><span ng-bind-html-unsafe="translate({value: floor})" class="bubble limit"></span><span ng-bind-html-unsafe="translate({value: ceiling})" class="bubble limit"></span><span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>'
     compile: (element, attributes) ->
 
         # Expand the translation function abbreviation
