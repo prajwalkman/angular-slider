@@ -24,7 +24,7 @@ roundStep       = (value, precision, step, floor = 0) ->
         else value - remainder
     decimals = Math.pow 10, precision
     roundedValue = steppedValue * decimals / decimals
-    roundedValue.toFixed precision
+    parseFloat roundedValue.toFixed precision
 inputEvents =
     mouse:
         start: 'mousedown'
