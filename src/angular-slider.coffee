@@ -178,15 +178,15 @@ sliderDirective = ($timeout) ->
                         newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth
                         newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
                         newPercent = percentOffset newOffset
-                        newValue = minValue + (valueRange * newPercent / 100.0)
+                        newValue = Math.round(minValue + (valueRange * newPercent / 100.0))
                         if range
                             if ref is refLow
-                                if newValue > scope[refHigh]
+                                if newValue >= scope[refHigh]
                                     ref = refHigh
                                     minPtr.removeClass 'active'
                                     maxPtr.addClass 'active'
                             else
-                                if newValue < scope[refLow]
+                                if newValue <= scope[refLow]
                                     ref = refLow 
                                     maxPtr.removeClass 'active'
                                     minPtr.addClass 'active'
