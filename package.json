@@ -1,6 +1,6 @@
 {
   "name": "angular-slider",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Slider directive implementation for AngularJS, without jQuery dependencies.",
   "main": "angular-slider.js",
   "scripts": {
