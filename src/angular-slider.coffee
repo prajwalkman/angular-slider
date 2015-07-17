@@ -174,7 +174,10 @@ sliderDirective = ($timeout) ->
                         ngDocument.unbind events.move
                         ngDocument.unbind events.end
                     onMove = (event) ->
-                        eventX = event.clientX || event.touches[0].clientX
+                        if event['touches']
+                            eventX = event.touches?[0].clientX
+                        else
+                            eventX = event.clientX
                         newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth
                         newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset)
                         newPercent = percentOffset newOffset
