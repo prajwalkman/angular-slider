@@ -266,7 +266,7 @@
                   newValue = minValue + (valueRange * newPercent / 100.0);
                   if (range) {
                     if (ref === refLow) {
-                      if (newValue > scope[refHigh]) {
+                      if (newValue >= scope[refHigh]) {
                         ref = refHigh;
                         minPtr.removeClass('active');
                         maxPtr.addClass('active');
