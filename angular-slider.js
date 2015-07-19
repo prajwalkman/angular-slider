@@ -81,7 +81,7 @@
     }
   };
 
-  sliderDirective = function($timeout) {
+  sliderDirective = function($timeout, $window) {
     return {
       restrict: 'EA',
       scope: {
@@ -256,10 +256,11 @@
                   ngDocument.unbind(events.move);
                   return ngDocument.unbind(events.end);
                 };
-                onMove = function(event) {
-                  var eventX, newOffset, newPercent, newValue;
+                onMove = function(customEvent) {
+                  var eventX, newOffset, newPercent, newValue,
+                      myEvent = $window.event || customEvent;
 
-                  eventX = event.clientX || event.touches[0].clientX;
+                  eventX = myEvent.clientX || myEvent.touches[0].clientX;
                   newOffset = eventX - element[0].getBoundingClientRect().left - pointerHalfWidth;
                   newOffset = Math.max(Math.min(newOffset, maxOffset), minOffset);
                   newPercent = percentOffset(newOffset);
@@ -327,7 +328,7 @@
     };
   };
 
-  qualifiedDirectiveDefinition = ['$timeout', sliderDirective];
+  qualifiedDirectiveDefinition = ['$timeout', '$window', sliderDirective];
 
   module = function(window, angular) {
     return angular.module(MODULE_NAME, []).directive(SLIDER_TAG, qualifiedDirectiveDefinition);
