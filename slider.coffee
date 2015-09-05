@@ -56,6 +56,7 @@ sliderDirective = ($timeout) ->
     ngModel:      '=?'
     ngModelLow:   '=?'
     ngModelHigh:  '=?'
+    change:       '&'
   template: '''
     <div class="bar"><div class="selection"></div></div>
     <div class="handle low"></div><div class="handle high"></div>
@@ -151,6 +152,7 @@ sliderDirective = ($timeout) ->
 
         bind = (handle, bubble, ref, events) ->
           currentRef = ref
+          changed = false
           onEnd = ->
             bubble.removeClass 'active'
             handle.removeClass 'active'
@@ -161,6 +163,10 @@ sliderDirective = ($timeout) ->
               scope[low] = scope.local[low]
             currentRef = ref
             scope.$apply()
+
+            if changed
+              scope.$eval scope.change
+
           onMove = (event) ->
             eventX = event.clientX or event.touches?[0].clientX or event.originalEvent?.changedTouches?[0].clientX or 0
             newOffset = eventX - element[0].getBoundingClientRect().left - handleHalfWidth
@@ -192,12 +198,17 @@ sliderDirective = ($timeout) ->
                     newValue = Math.max newValue,
                       parseInt(scope.local[low]) + parseInt(scope.buffer)
             newValue = roundStep(newValue, parseInt(scope.precision), parseFloat(scope.step), parseFloat(scope.floor))
+            changed = scope.dragstop and changed or scope.local[currentRef] != newValue
             scope.local[currentRef] = newValue
-            unless scope.dragstop
-              scope[currentRef] = newValue
+            scope.$apply()
             setPointers()
 
-            scope.$apply()
+            unless scope.dragstop
+              scope[currentRef] = newValue
+
+              if changed
+                scope.$eval scope.change
+
           onStart = (event) ->
             dimensions()
             bubble.addClass 'active'
