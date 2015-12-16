@@ -16,7 +16,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "ignore": ["*",
-    "!slider.scss",
     "!slider.css",
     "!slider.js"
   ]
