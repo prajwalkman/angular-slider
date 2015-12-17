@@ -15,8 +15,4 @@
   "author": "PopSugar",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "ignore": ["*",
-    "!slider.css",
-    "!slider.js"
-  ]
 }
