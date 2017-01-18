@@ -94,7 +94,7 @@
         highlight: '@',
         precision: '@',
         buffer: '@',
-        dragstop: '@',
+        dragstop: '=',
         block: '=',
         ngModel: '=?',
         ngModelLow: '=?',
